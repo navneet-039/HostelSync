@@ -39,3 +39,26 @@ export const loginController = async (req, res) => {
     res.status(500).json({ message: "internal error" });
   }
 };
+ exports.changePassword=async(req,res)=>{
+  
+  let {email,oldpassword,newpassword}=req.body;
+  try{
+  const user=User.findOne({email});
+  if(!user){
+    res.status(401).json({success:false,message:"invalid user"});
+  }
+  const ismatched=await bcrypt.compare(oldpassword,user.password);
+  if(!ismatched){
+    res.status(400).json({success: false,message:"invalid password"});
+  }
+  const hashedpassword=await bcrypt.hash(newpassword,10);
+  user.password=hashedpassword;
+  user.save();
+  return res.status(200).json({success: true,message:"user password changed successfully"});
+
+ }
+catch(err){
+  console.log(err);
+  res.status(500).json({success: false,message:"something wrong"})
+
+}}
