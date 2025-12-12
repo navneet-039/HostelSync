@@ -39,6 +39,78 @@ export const loginController = async (req, res) => {
     res.status(500).json({ message: "internal error" });
   }
 };
+exports.registerStudent = async (req, res) => {
+  try {
+    const { name, registrationNumber, email, password, hostel, room } =
+      req.body;
+
+    if (
+      !name ||
+      !registrationNumber ||
+      !email ||
+      !password ||
+      !hostel ||
+      !room
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required",
+      });
+    }
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: "User already registered",
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newStudent = await User.create({
+      name,
+      registrationNumber,
+      email,
+      password: hashedPassword,
+      hostel,
+      room,
+      role: "Student",
+    });
+
+    const resetLink = `https://localhost5000/reset-password?email=${email}`;
+
+    const html = registerStudentTemplate(
+      email,
+      password,
+      registrationNumber,
+      hostel,
+      room,
+      resetLink
+    );
+
+    await sendMail(newStudent.email, "Registration Successful", html);
+
+    return res.status(201).json({
+      success: true,
+      message: "Student registered successfully",
+      student: {
+        id: newStudent._id,
+        name: newStudent.name,
+        email: newStudent.email,
+        registrationNumber: newStudent.registrationNumber,
+        hostel: newStudent.hostel,
+        room: newStudent.room,
+      },
+    });
+  } catch (error) {
+    console.log("Registration Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
  exports.changePassword=async(req,res)=>{
   
   let {email,oldpassword,newpassword}=req.body;
