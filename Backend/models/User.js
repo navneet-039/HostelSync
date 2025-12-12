@@ -32,6 +32,10 @@ const UserSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+    floor: {
+      type: String,
+      default: null,
+    },
     hostel: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Hostel",

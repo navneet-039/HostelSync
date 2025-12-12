@@ -1,5 +1,6 @@
-import User from "../models/User.js";
-import bcrypt from "bcryptjs";
+const User = require("../models/User");
+const Complaint = require("../models/Complaint");
+const bcrypt = require("bcryptjs");
 const { sendMail } = require("../utils/sendMail");
 const { registerStudentTemplate } = require("../mailTemplates/registerStudent");
 
@@ -157,7 +158,4 @@ exports.changePassword = async (req, res) => {
     });
   }
 };
-
-
-
 
