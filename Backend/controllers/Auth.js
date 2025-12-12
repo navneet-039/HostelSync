@@ -1,0 +1,49 @@
+import User from "../models/User.js";
+import bcrypt from "bcryptjs";
+const { sendMail } = require("../utils/sendMail");
+const { registerStudentTemplate } = require("../mailTemplates/registerStudent");
+
+const {
+  generateAccessToken,
+  generateRefreshToken,
+} = require("../utils/tokenGenerator");
+const { sendMail } = require("../utils/mailSender.js");
+
+export const loginController = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "user not found" });
+    }
+    const ismatched = await bcrypt.compare(password, user.password);
+    if (!ismatched) {
+      return res.status(401).json({ message: "wrong password" });
+    }
+    const payload = {
+      email: user.email,
+      id: user._id,
+      role: user.role,
+    };
+
+    const accessToken = generateAccessToken(payload);
+    const refreshToken = generateRefreshToken(payload);
+    user.refreshToken = refreshToken;
+    await user.save();
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+    return res.status(200).json({ message: "login sucessfull", accessToken });
+  } catch {
+    res.status(500).json({ message: "internal error" });
+  }
+};
+
+
+
+
+

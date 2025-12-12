@@ -26,6 +26,7 @@ const ComplaintSchema = new mongoose.Schema({
     ref: "User",
     required: true
   },
+  
 
   hostel: {
     type: mongoose.Schema.Types.ObjectId,
