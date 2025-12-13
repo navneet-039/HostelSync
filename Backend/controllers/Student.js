@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const Hostel = require("../models/Hostel");
 const Complaint = require("../models/Complaint");
 exports.getAllStudentComplaints = async (req, res) => {
   try {
@@ -20,6 +21,36 @@ exports.getAllStudentComplaints = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Error while fetching student's complaint...",
+    });
+  }
+};
+exports.getSupervisorComplaints = async (req, res) => {
+  try {
+    const supervisor = await User.findById(req.user.id);
+    if (!supervisor || !supervisor.hostel) {
+      return res.status(400).json({
+        success: false,
+        message: "Supervisor hostel information missing",
+      });
+    }
+
+    const complaints = await Complaint.find({
+      hostel: supervisor.hostel,
+      status: { $in: ["Pending", "In_progress"] },
+    })
+      .populate("student", "registrationNumber roomNumber floor")
+      .sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      success: true,
+      complaints,
+    });
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
     });
   }
 };
