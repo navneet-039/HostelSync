@@ -3,6 +3,7 @@ import Complaint from "../models/Complaint.js";
 import bcrypt from "bcryptjs";
 import sendMail from "../utils/mailSender.js";
 import Hostel from "../models/Hostel.js";
+import jwt from "jsonwebtoken";
 import { registerStudentTemplate } from "../mailTemplates/registrantionMail.js";
 import {
   generateAccessToken,
@@ -73,6 +74,7 @@ export const registerStudent = async (req, res) => {
         message: "User already registered",
       });
     }
+   
 
     const hashedPassword = await bcrypt.hash(password, 10);
 

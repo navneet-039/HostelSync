@@ -5,12 +5,16 @@ import { connect } from "./Config/mongodb.js";
 import userRoutes from "./routes/User.js";
 import complaintRoutes from "./routes/complaint.js";
 import supervisorRoutes from "./routes/supervisor.js";
+import cookieParser from "cookie-parser";
+
+
 
 dotenv.config();
 
 const app = express();
 
 app.use(express.json());
+app.use(cookieParser());
 
 connect();
 

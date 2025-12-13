@@ -5,9 +5,9 @@ import { loginController, registerStudent, changePassword,refreshAccessToken ,cr
 const router = express.Router();
 
 router.post("/login", loginController);
-router.post("/register",isSupervisor, registerStudent);
+router.post("/register",auth,isSupervisor, registerStudent);
 router.patch("/change-password", auth,isStudent, changePassword);
-router.get("/refresh-token",isStudent, refreshAccessToken);
+router.get("/refresh-token", refreshAccessToken);
 router.post("/create-supervisor",createSupervisor);
 router.post("/create-hostel",createHostel);
 
