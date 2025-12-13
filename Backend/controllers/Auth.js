@@ -160,3 +160,60 @@ export const changePassword = async (req, res) => {
     });
   }
 };
+
+export const refreshAccessToken = async (req, res) => {
+  try {
+    const oldRefreshToken = req.cookies.refreshToken;
+
+    if (!oldRefreshToken) {
+      return res.status(401).json({
+        message: "Refresh token missing",
+      });
+    };
+    
+    const decode = jwt.verify(
+      oldRefreshToken,
+      process.env.REFRESH_TOKEN_SECRET
+    );
+    const user = await User.findById(decode.id);
+
+    if (!user || user.refreshToken !== oldRefreshToken) {
+      return res.status(400).json({
+        success: false,
+        message: "Refresh token does not matches",
+      });
+    }
+
+    const payload = {
+      email: user.email,
+      id: user._id,
+      role: user.role,
+    };
+
+    const newAccessToken = generateAccessToken(payload);
+    const newRefreshToken = generateRefreshToken(payload);
+
+    user.refreshToken = newRefreshToken;
+    await user.save();
+
+    res.cookie("refreshToken", newRefreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "New access token sent",
+      accessToken: newAccessToken,
+    });
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Error while generating new AccessToken",
+    });
+  }
+};
