@@ -1,10 +1,14 @@
-import User from "../models/User.js";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+const User = require("../models/User");
+const Complaint = require("../models/Complaint");
+const bcrypt = require("bcryptjs");
+const { sendMail } = require("../utils/sendMail");
+const { registerStudentTemplate } = require("../mailTemplates/registerStudent");
+
 const {
   generateAccessToken,
   generateRefreshToken,
 } = require("../utils/tokenGenerator");
+const { sendMail } = require("../utils/mailSender.js");
 
 export const loginController = async (req, res) => {
   try {
@@ -27,7 +31,7 @@ export const loginController = async (req, res) => {
     const refreshToken = generateRefreshToken(payload);
     user.refreshToken = refreshToken;
     await user.save();
-   
+
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: true,
@@ -39,6 +43,7 @@ export const loginController = async (req, res) => {
     res.status(500).json({ message: "internal error" });
   }
 };
+
 exports.registerStudent = async (req, res) => {
   try {
     const { name, registrationNumber, email, password, hostel, room } =
@@ -78,7 +83,7 @@ exports.registerStudent = async (req, res) => {
       role: "Student",
     });
 
-    const resetLink = `https://localhost5000/reset-password?email=${email}`;
+    const resetLink = "https://localhost5000/reset-password?email=${email}";
 
     const html = registerStudentTemplate(
       email,
@@ -111,26 +116,46 @@ exports.registerStudent = async (req, res) => {
     });
   }
 };
- exports.changePassword=async(req,res)=>{
-  
-  let {email,oldpassword,newpassword}=req.body;
-  try{
-  const user=User.findOne({email});
-  if(!user){
-    res.status(401).json({success:false,message:"invalid user"});
-  }
-  const ismatched=await bcrypt.compare(oldpassword,user.password);
-  if(!ismatched){
-    res.status(400).json({success: false,message:"invalid password"});
-  }
-  const hashedpassword=await bcrypt.hash(newpassword,10);
-  user.password=hashedpassword;
-  user.save();
-  return res.status(200).json({success: true,message:"user password changed successfully"});
 
- }
-catch(err){
-  console.log(err);
-  res.status(500).json({success: false,message:"something wrong"})
+exports.changePassword = async (req, res) => {
+  try {
+    const { email, oldPassword, newPassword } = req.body;
 
-}}
+    const existingUser = await User.findOne({ email });
+    if (!existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: "User does not exist",
+      });
+    }
+
+    const isPasswordMatched = await bcrypt.compare(
+      oldPassword,
+      existingUser.password
+    );
+
+    if (!isPasswordMatched) {
+      return res.status(400).json({
+        success: false,
+        message: "Wrong old password",
+      });
+    }
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    existingUser.password = hashedPassword;
+
+    await existingUser.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Password changed successfully",
+      student: existingUser,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Error while changing password",
+    });
+  }
+};
+
