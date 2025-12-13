@@ -4,10 +4,10 @@ const router = express.Router();
 const {
   getAllStudentComplaints,
   getSupervisorComplaints,
-} = require("../controllers/complaintController");
+} = require("../controllers/Complaint");
 
-const { auth } = require("../middleware/auth");
-const { isStudent, isSupervisor } = require("../middleware/roles");
+const { auth } = require("../middleware/Auth");
+const { isStudent, isSupervisor } = require("../middlewares/Auth");
 
 
 

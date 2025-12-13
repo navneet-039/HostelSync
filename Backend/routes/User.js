@@ -8,7 +8,7 @@ const {
   loginController,
   registerStudent,
   changePassword,
-} = require("../controllers/userController");
+} = require("../controllers/Auth");
 
 
 router.post("/login", loginController);

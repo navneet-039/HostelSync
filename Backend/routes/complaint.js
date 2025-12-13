@@ -5,7 +5,7 @@ const { auth } = require("../middlewares/Auth");
 const {
   registerComplaint,
   updateComplaintStatus,
-} = require("../controllers/complaintController");
+} = require("../controllers/Controller");
 
 
 router.post("/register", auth, registerComplaint);
