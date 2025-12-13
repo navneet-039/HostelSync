@@ -1,4 +1,5 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
+
 const UserSchema = new mongoose.Schema(
   {
     name: {
@@ -27,7 +28,8 @@ const UserSchema = new mongoose.Schema(
       enum: ["Student", "Supervisor", "Chief_warden"],
       required: true,
     },
-    //for students
+
+    // for students
     roomNumber: {
       type: String,
       default: null,
@@ -49,11 +51,13 @@ const UserSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+
     supervisorOfHostel: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Hostel",
       default: null,
     },
+
     refreshToken: {
       type: String,
       default: null,
@@ -61,4 +65,5 @@ const UserSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-module.exports = mongoose.model("User", UserSchema);
+
+export default mongoose.model("User", UserSchema);

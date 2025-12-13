@@ -1,19 +1,24 @@
-const jwt = require("jsonwebtoken");
-const User = require("../models/User");
+import jwt from "jsonwebtoken";
+import User from "../models/User.js";
 
-exports.auth = async (req, res, next) => {
+export const auth = async (req, res, next) => {
   try {
     const authorizationHeader = req.headers.authorization;
+
     if (!authorizationHeader || !authorizationHeader.startsWith("Bearer ")) {
       return res.status(401).json({
         success: false,
         message: "Access token missing or invalid",
       });
     }
+
     const accessToken = authorizationHeader.split(" ")[1];
-    const decode = jwt
-      .verify(accessToken, process.env.ACCESS_TOKEN_SECRET)
-      .select("-password");
+
+    const decode = jwt.verify(
+      accessToken,
+      process.env.ACCESS_TOKEN_SECRET
+    );
+
     req.user = decode;
     next();
   } catch (error) {
@@ -25,7 +30,7 @@ exports.auth = async (req, res, next) => {
   }
 };
 
-exports.isStudent = async (req, res, next) => {
+export const isStudent = async (req, res, next) => {
   try {
     if (req.user.role !== "Student") {
       return res.status(401).json({
@@ -41,7 +46,8 @@ exports.isStudent = async (req, res, next) => {
     });
   }
 };
-exports.isSupervisor = async (req, res, next) => {
+
+export const isSupervisor = async (req, res, next) => {
   try {
     if (req.user.role !== "Supervisor") {
       return res.status(401).json({
@@ -58,7 +64,7 @@ exports.isSupervisor = async (req, res, next) => {
   }
 };
 
-exports.isWarden = async (req, res, next) => {
+export const isWarden = async (req, res, next) => {
   try {
     if (req.user.role !== "Chief_warden") {
       return res.status(401).json({

@@ -1,7 +1,9 @@
-const User = require("../models/User");
-const Hostel = require("../models/Hostel");
-const Complaint = require("../models/Complaint");
-exports.getAllStudentComplaints = async (req, res) => {
+import User from "../models/User.js";
+import Hostel from "../models/Hostel.js";
+import Complaint from "../models/Complaint.js";
+
+
+export const getAllStudentComplaints = async (req, res) => {
   try {
     const complaints = await Complaint.find({
       student: req.user.id,
@@ -14,8 +16,9 @@ exports.getAllStudentComplaints = async (req, res) => {
     return res.status(200).json({
       success: true,
       complaints,
-      message:"All complaints of students fetched successfully.."
+      message: "All complaints of students fetched successfully..",
     });
+
   } catch (error) {
     console.log(error);
     return res.status(500).json({
@@ -24,9 +27,12 @@ exports.getAllStudentComplaints = async (req, res) => {
     });
   }
 };
-exports.getSupervisorComplaints = async (req, res) => {
+
+
+export const getSupervisorComplaints = async (req, res) => {
   try {
     const supervisor = await User.findById(req.user.id);
+
     if (!supervisor || !supervisor.hostel) {
       return res.status(400).json({
         success: false,

@@ -1,3 +1,5 @@
+import mongoose from "mongoose";
+
 const ComplaintSchema = new mongoose.Schema(
   {
     title: {
@@ -45,13 +47,13 @@ const ComplaintSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+
     date: {
       type: Date,
       default: Date.now,
     },
-    
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Complaint", ComplaintSchema);
+export default mongoose.model("Complaint", ComplaintSchema);

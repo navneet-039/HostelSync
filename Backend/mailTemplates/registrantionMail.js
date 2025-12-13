@@ -1,4 +1,4 @@
-exports.registerStudent = (
+export const registerStudentTemplate = (
   email,
   password,
   registrationNumber,

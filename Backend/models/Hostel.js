@@ -1,25 +1,30 @@
-const HostelSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true
-  },
+import mongoose from "mongoose";
 
-  block: String,
+const HostelSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
 
-  capacity: Number,
+    block: String,
 
-  supervisor: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    default: null
-  },
+    capacity: Number,
 
-  students: [
-    {
+    supervisor: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User"
-    }
-  ]
-}, { timestamps: true });
+      ref: "User",
+      default: null,
+    },
 
-module.exports = mongoose.model("Hostel", HostelSchema);
+    students: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+  },
+  { timestamps: true }
+);
+
+export default mongoose.model("Hostel", HostelSchema);
