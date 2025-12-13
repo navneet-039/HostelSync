@@ -17,7 +17,7 @@ const UserSchema = new mongoose.Schema(
     },
     registrationNumber: {
       type: String,
-      required: true,
+      
     },
     password: {
       type: String,

@@ -2,6 +2,7 @@ import User from "../models/User.js";
 import Complaint from "../models/Complaint.js";
 import bcrypt from "bcryptjs";
 import sendMail from "../utils/mailSender.js";
+import Hostel from "../models/Hostel.js";
 import { registerStudentTemplate } from "../mailTemplates/registrantionMail.js";
 import {
   generateAccessToken,
@@ -217,3 +218,87 @@ export const refreshAccessToken = async (req, res) => {
     });
   }
 };
+
+
+export const createSupervisor = async (req, res) => {
+  try {
+    const { name, email, phone, password, hostelName } = req.body;
+
+    if (!name || !email || !phone || !password || !hostelName) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "User already exists" });
+    }
+
+    const hostel = await Hostel.findOne({ name: hostelName });
+    if (!hostel) {
+      return res.status(404).json({ message: "Hostel not found" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const supervisor = await User.create({
+      name,
+      email,
+      phone,
+      password: hashedPassword,
+      role: "Supervisor",
+      supervisorOfHostel: hostel._id,
+    });
+
+    // Update hostel to link supervisor
+    hostel.supervisor = supervisor._id;
+    await hostel.save();
+
+    res.status(201).json({
+      message: "Supervisor created successfully",
+      supervisor: {
+        id: supervisor._id,
+        name: supervisor.name,
+        email: supervisor.email,
+        hostel: hostel.name,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+export const createHostel = async (req, res) => {
+  try {
+    const { name, capacity } = req.body;
+
+    if (!name || !capacity) {
+      return res.status(400).json({ message: "Name and capacity are required" });
+    }
+
+    const existingHostel = await Hostel.findOne({ name });
+    if (existingHostel) {
+      return res.status(400).json({ message: "Hostel already exists" });
+    }
+
+    const hostel = await Hostel.create({
+      name,
+      capacity,
+    });
+
+    res.status(201).json({
+      message: "Hostel created successfully",
+      hostel: {
+        id: hostel._id,
+        name: hostel.name,
+        capacity: hostel.capacity,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
