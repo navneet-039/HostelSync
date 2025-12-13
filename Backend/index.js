@@ -1,18 +1,19 @@
-const express = require("express");
+import express from "express";
+import dotenv from "dotenv";
+import { connect } from "./Config/mongodb.js";
 
-const database = require("./Config/mongodb");
+import userRoutes from "./routes/User.js";
+import complaintRoutes from "./routes/complaint.js";
+import supervisorRoutes from "./routes/supervisor.js";
+
+dotenv.config();
+
 const app = express();
-const userRoutes = require("./routes/User");
-const complaintRoutes = require("./routes/complaint");
-const supervisorRoutes = require("./routes/supervisor");
 
-
-
-
-require("dotenv").config();
-
-database.connect();
 app.use(express.json());
+
+connect();
+
 app.get("/", (req, res) => {
   res.send("Server is running ...");
 });
@@ -20,12 +21,8 @@ app.get("/", (req, res) => {
 app.use("/api/users", userRoutes);
 app.use("/api/complaints", complaintRoutes);
 app.use("/api/supervisor", supervisorRoutes);
-const PORT = process.env.PORT || 8001;
 
+const PORT = process.env.PORT || 8001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-app.use("/api/users", User);
-
-
-

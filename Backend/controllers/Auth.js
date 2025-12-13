@@ -1,8 +1,8 @@
 import User from "../models/User.js";
 import Complaint from "../models/Complaint.js";
 import bcrypt from "bcryptjs";
-import sendMail from "../utils/sendMail.js";
-import { registerStudentTemplate } from "../mailTemplates/registerStudent.js";
+import sendMail from "../utils/mailSender.js";
+import { registerStudentTemplate } from "../mailTemplates/registrantionMail.js";
 import {
   generateAccessToken,
   generateRefreshToken,

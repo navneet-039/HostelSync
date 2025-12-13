@@ -1,16 +1,10 @@
-const express = require("express");
+import express from "express";
+import { auth } from "../middlewares/Auth.js";
+import { registerComplaint, updateComplaintStatus } from "../controllers/Complaint.js";
+
 const router = express.Router();
 
-const { auth } = require("../middlewares/Auth");
-const {
-  registerComplaint,
-  updateComplaintStatus,
-} = require("../controllers/Controller");
-
-
 router.post("/register", auth, registerComplaint);
-
-
 router.patch("/status/:complaintId", auth, updateComplaintStatus);
 
-module.exports = router;
+export default router;
