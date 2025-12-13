@@ -1,7 +1,9 @@
 
 
-const nodemailer = require("nodemailer");
-require("dotenv").config();
+import nodemailer from "nodemailer";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const sendMail = async (to, subject, html) => {
   try {
@@ -29,4 +31,4 @@ const sendMail = async (to, subject, html) => {
   }
 };
 
-module.exports = sendMail;
+export default sendMail;
