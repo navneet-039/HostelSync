@@ -1,15 +1,39 @@
-import { createContext,useEffect,useState } from "react";
+import { createContext, useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import api from "../api/axios";
 
-import axios from 'axios';
+export const AppContext = createContext(null);
 
-export const AppContext=createContext();
-const AppContextProvider=(props)=>{
-  return (
-    <AppContext.Provider value={value}>
-      {props.children}
+const AppContextProvider = ({ children }) => {
+  const [studentComplaints, setStudentComplaints] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-    </AppContext.Provider>
-  )
-}
+  const fetchStudentComplaints = async () => {
+    setLoading(true);
+    try {
+      const { data } = await api.get("/api/supervisor/student/complaints");
+      setStudentComplaints(data.complaints || []);
+    } catch (error) {
+      console.error(error);
+      toast.error(
+        error.response?.data?.message || "Failed to fetch complaints"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchStudentComplaints();
+  }, []);
+
+  const value = {
+    studentComplaints,
+    loading,
+    fetchStudentComplaints,
+  };
+
+  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
+};
 
 export default AppContextProvider;

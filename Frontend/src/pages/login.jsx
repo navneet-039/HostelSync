@@ -43,12 +43,6 @@ export default function Login() {
             Submit
           </button>
         </form>
-
-        <div className="mt-5 text-center">
-          <button className="text-sm text-red-600 hover:underline">
-            Change Password{" "}
-          </button>
-        </div>
       </div>
     </div>
   );
