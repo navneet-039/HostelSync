@@ -14,10 +14,7 @@ const AppContextProvider = ({ children }) => {
       const { data } = await api.get("/api/supervisor/student/complaints");
       setStudentComplaints(data.complaints || []);
     } catch (error) {
-      console.error(error);
-      toast.error(
-        error.response?.data?.message || "Failed to fetch complaints"
-      );
+      toast.error(error.response?.data?.message || "Failed to fetch complaints");
     } finally {
       setLoading(false);
     }
@@ -27,13 +24,11 @@ const AppContextProvider = ({ children }) => {
     fetchStudentComplaints();
   }, []);
 
-  const value = {
-    studentComplaints,
-    loading,
-    fetchStudentComplaints,
-  };
-
-  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
+  return (
+    <AppContext.Provider value={{ studentComplaints, loading }}>
+      {children}
+    </AppContext.Provider>
+  );
 };
 
 export default AppContextProvider;
