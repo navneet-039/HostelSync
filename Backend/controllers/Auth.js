@@ -13,6 +13,7 @@ import {
 
 export const loginController = async (req, res) => {
   try {
+    console.log("hii");
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });
