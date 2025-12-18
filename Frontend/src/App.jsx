@@ -1,25 +1,30 @@
 import { Routes, Route } from "react-router-dom";
-import Login from "./pages/Login";
-import ProtectedRoute from "./components/protectedRoute";
+import { AuthContextProvider } from "./context/authContext";
+import AppContextProvider from "./context/appContext";
 
-function Home() {
-  return <h1>Dashboard</h1>;
-}
+import Home from "./pages/homePage";
+import Login from "./pages/login";
+import StudentRegisteredComplaint from "./pages/StudentRegisteredComplaint";
+import ProtectedRoute from "./components/protectedRoute";
 
 function App() {
   return (
-    <Routes>
-      <Route path="/login" element={<Login />} />
-
-      <Route
-        path="/"
-        element={
-          <ProtectedRoute>
-            <Home />
-          </ProtectedRoute>
-        }
-      />
-    </Routes>
+    <AuthContextProvider>
+      <AppContextProvider>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route
+            path="/all-complaints"
+            element={
+              <ProtectedRoute>
+                <StudentRegisteredComplaint />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </AppContextProvider>
+    </AuthContextProvider>
   );
 }
 

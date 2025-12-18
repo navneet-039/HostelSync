@@ -6,16 +6,14 @@ const api = axios.create({
   withCredentials: true,
 });
 
-// REQUEST INTERCEPTOR
+// Request interceptor
 api.interceptors.request.use((config) => {
   const token = getStoredAccessToken();
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
+  if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
 
-// RESPONSE INTERCEPTOR (REFRESH TOKEN)
+// Response interceptor for 401
 api.interceptors.response.use(
   (res) => res,
   async (error) => {
@@ -24,20 +22,22 @@ api.interceptors.response.use(
     if (error.response?.status === 401 && !originalReq._retry) {
       originalReq._retry = true;
       try {
-        // 🔁 REFRESH TOKEN API
-        const res = await api.get("/api/users/refresh-token");
-        console.log(res);
-        console.log("hello from axios")
+        const res = await api.get("/api/users/refresh-token", { withCredentials: true });
+
+        if (!res.data?.accessToken) {
+          setStoredAccessToken(null);
+          return Promise.reject(error);
+        }
 
         setStoredAccessToken(res.data.accessToken);
         originalReq.headers.Authorization = `Bearer ${res.data.accessToken}`;
-
         return api(originalReq);
       } catch (err) {
         setStoredAccessToken(null);
         return Promise.reject(err);
       }
     }
+
     return Promise.reject(error);
   }
 );

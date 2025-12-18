@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState, useContext } from "react";
+import { createContext, useEffect, useState, useCallback, useContext } from "react";
 import toast from "react-hot-toast";
 import api from "../api/axios";
 import AuthContext from "./authContext";
@@ -6,36 +6,30 @@ import AuthContext from "./authContext";
 export const AppContext = createContext(null);
 
 const AppContextProvider = ({ children }) => {
-  const { accessToken, loading } = useContext(AuthContext);
-
+  const { accessToken, user, loading } = useContext(AuthContext);
   const [studentComplaints, setStudentComplaints] = useState([]);
   const [dataLoading, setDataLoading] = useState(false);
 
-  const fetchStudentComplaints = async () => {
+  const fetchStudentComplaints = useCallback(async () => {
+    if (!accessToken || !user) return;
     setDataLoading(true);
     try {
-      const { data } = await api.get(
-        "/api/supervisor/student/complaints"
-      );
-      console.log(data);
+      const { data } = await api.get("/api/supervisor/student/complaints");
       setStudentComplaints(data.complaints || []);
-    } catch (error) {
-      toast.error(
-        error.response?.data?.message || "Failed to fetch complaints"
-      );
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to fetch complaints");
     } finally {
       setDataLoading(false);
     }
-  };
+  }, [accessToken, user]);
 
   useEffect(() => {
-    if (!loading && accessToken) {
-      fetchStudentComplaints();
-    }
-  }, [loading, accessToken]);
+    if (!loading && accessToken && user) fetchStudentComplaints();
+    else if (!accessToken || !user) setStudentComplaints([]);
+  }, [loading, accessToken, user, fetchStudentComplaints]);
 
   return (
-    <AppContext.Provider value={{ studentComplaints, dataLoading }}>
+    <AppContext.Provider value={{ studentComplaints, dataLoading, fetchStudentComplaints }}>
       {children}
     </AppContext.Provider>
   );
