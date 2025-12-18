@@ -6,6 +6,7 @@ import Home from "./pages/homePage";
 import Login from "./pages/login";
 import StudentRegisteredComplaint from "./pages/StudentRegisteredComplaint";
 import ProtectedRoute from "./components/protectedRoute";
+import RegisterComplaint from "./pages/regsiterComplaint";
 
 function App() {
   return (
@@ -19,6 +20,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <StudentRegisteredComplaint />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/register-complaints"
+            element={
+              <ProtectedRoute>
+                <RegisterComplaint />
               </ProtectedRoute>
             }
           />
