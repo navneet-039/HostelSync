@@ -5,6 +5,7 @@ import Complaint from "../models/Complaint.js";
 
 export const registerComplaint = async (req, res) => {
   try {
+    console.log("hlo from register complaint");
     const { title, description, category } = req.body;
 
     const student = await User.findById(req.user.id);
