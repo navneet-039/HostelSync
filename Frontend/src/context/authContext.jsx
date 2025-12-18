@@ -14,6 +14,8 @@ export const AuthContextProvider = ({ children }) => {
     try {
       // 🔁 Get token from refresh cookie
       const res = await api.get("/api/users/refresh-token");
+      console.log(res);
+      console.log("hello from authContext");
       accessTokenMemory = res.data.accessToken;
       setAccessToken(res.data.accessToken);
     } catch (error) {

@@ -26,6 +26,8 @@ api.interceptors.response.use(
       try {
         // 🔁 REFRESH TOKEN API
         const res = await api.get("/api/users/refresh-token");
+        console.log(res);
+        console.log("hello from axios")
 
         setStoredAccessToken(res.data.accessToken);
         originalReq.headers.Authorization = `Bearer ${res.data.accessToken}`;

@@ -17,6 +17,7 @@ const AppContextProvider = ({ children }) => {
       const { data } = await api.get(
         "/api/supervisor/student/complaints"
       );
+      console.log(data);
       setStudentComplaints(data.complaints || []);
     } catch (error) {
       toast.error(

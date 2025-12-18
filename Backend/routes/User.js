@@ -1,6 +1,6 @@
 import express from "express";
 import { auth,isStudent,isSupervisor } from "../middlewares/Auth.js";
-import { loginController, registerStudent, changePassword,refreshAccessToken ,createSupervisor,createHostel} from "../controllers/Auth.js";
+import { loginController, registerStudent, changePassword,refreshAccessToken ,createSupervisor,createHostel,logoutUser} from "../controllers/Auth.js";
 
 const router = express.Router();
 
@@ -10,5 +10,6 @@ router.patch("/change-password", auth,isStudent, changePassword);
 router.get("/refresh-token", refreshAccessToken);
 router.post("/create-supervisor",createSupervisor);
 router.post("/create-hostel",createHostel);
+router.post("/logout",logoutUser)
 
 export default router;

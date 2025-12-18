@@ -40,8 +40,8 @@ export const loginController = async (req, res) => {
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: true,
-      sameSite: "strict",
+      secure: false,
+      sameSite: "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -171,20 +171,22 @@ export const refreshAccessToken = async (req, res) => {
 
     if (!oldRefreshToken) {
       return res.status(401).json({
+        success: false,
         message: "Refresh token missing",
       });
-    };
-    
-    const decode = jwt.verify(
+    }
+
+    const decoded = jwt.verify(
       oldRefreshToken,
       process.env.REFRESH_TOKEN_SECRET
     );
-    const user = await User.findById(decode.id);
+
+    const user = await User.findById(decoded.id);
 
     if (!user || user.refreshToken !== oldRefreshToken) {
-      return res.status(400).json({
+      return res.status(401).json({
         success: false,
-        message: "Refresh token does not matches",
+        message: "Invalid refresh token",
       });
     }
 
@@ -202,25 +204,26 @@ export const refreshAccessToken = async (req, res) => {
 
     res.cookie("refreshToken", newRefreshToken, {
       httpOnly: true,
-      secure: true,
-      sameSite: "strict",
+      secure: false,      
+      sameSite: "lax",      
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
-      message: "New access token sent",
       accessToken: newAccessToken,
+      user
     });
   } catch (error) {
     console.log(error);
 
-    return res.status(500).json({
+    return res.status(401).json({
       success: false,
-      message: "Error while generating new AccessToken",
+      message: "Invalid or expired refresh token",
     });
   }
 };
+
 
 
 export const createSupervisor = async (req, res) => {
@@ -301,6 +304,30 @@ export const createHostel = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
+  }
+};
+export const logoutUser = async (req, res) => {
+  try {
+    const refreshToken = req.cookies.refreshToken;
+
+    if (!refreshToken) return res.sendStatus(204);
+
+    const user = await User.findOne({ refreshToken });
+    if (user) {
+      user.refreshToken = null; 
+      await user.save();
+    }
+
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: false, 
+      sameSite: "lax",
+    });
+
+    res.status(200).json({ message: "Logged out successfully" });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Logout failed" });
   }
 };
 
