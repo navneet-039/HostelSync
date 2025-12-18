@@ -32,6 +32,14 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/contact"
+            element={
+              
+                <Contact />
+              
+            }
+          />
 
           
          
