@@ -8,6 +8,7 @@ import Login from "./pages/login";
 import StudentRegisteredComplaint from "./pages/StudentRegisteredComplaint";
 import ProtectedRoute from "./components/protectedRoute";
 import RegisterComplaint from "./pages/regsiterComplaint";
+import Garima from "./pages/checking.jsx"
 
 
 function App() {
@@ -15,7 +16,10 @@ function App() {
     <AuthContextProvider>
       <AppContextProvider>
         <Routes>
+          <Route path="/garima" element={<Garima />} />
+          
           <Route path="/" element={<Home />} />
+          
           <Route path="/login" element={<Login />} />
           <Route
             path="/all-complaints"

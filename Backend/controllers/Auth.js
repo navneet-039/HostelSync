@@ -48,10 +48,18 @@ export const loginController = async (req, res) => {
     return res.status(200).json({
       message: "Login successful",
       accessToken,
+      user: {
+    id: user._id,
+    email: user.email,
+    role: user.role
+  }
+
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ message: "Internal server error" 
+
+    });
   }
 };
 

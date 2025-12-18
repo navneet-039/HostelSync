@@ -21,11 +21,17 @@ export default function Login() {
       setStoredAccessToken(res.data.accessToken);
       setAccessToken(res.data.accessToken);
 
+      const userRole = res.data.user.role;
+
+
       // Load user immediately
       await reloadUser();
 
       toast.success("Login successful");
-      navigate("/"); // Redirect to home
+      if (userRole === "Student") navigate("/");
+else if (userRole === "Supervisor") navigate("/garima ");
+else if (userRole === "admin") navigate("/admin-dashboard");
+      //navigate("/"); // Redirect to home
     } catch (err) {
       toast.error(err.response?.data?.message || "Login failed");
     } finally {
