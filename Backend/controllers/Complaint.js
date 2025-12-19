@@ -45,7 +45,24 @@ export const updateComplaintStatus = async (req, res) => {
     const { complaintId } = req.params;
     const { status } = req.body;
 
+    if (!["Pending", "In_progress", "Resolved"].includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid status value",
+      });
+    }
+
+    const supervisor = await User.findById(req.user.id);
+
+    if (!supervisor || supervisor.role !== "Supervisor") {
+      return res.status(403).json({
+        success: false,
+        message: "Access denied",
+      });
+    }
+
     const complaint = await Complaint.findById(complaintId);
+
     if (!complaint) {
       return res.status(404).json({
         success: false,
@@ -53,36 +70,31 @@ export const updateComplaintStatus = async (req, res) => {
       });
     }
 
-    const current = complaint.status;
-    const next = status;
-
-    const allowed = {
-      Pending: "In_progress",
-      In_progress: "Resolved",
-      Resolved: null,
-    };
-
-    if (allowed[current] !== next) {
-      return res.status(400).json({
+    if (
+      complaint.hostel.toString() !==
+      supervisor.supervisorOfHostel.toString()
+    ) {
+      return res.status(403).json({
         success: false,
-        message: `Invalid transition: ${current} → ${next} not allowed`,
+        message: "Not authorized",
       });
     }
 
-    complaint.status = next;
+    complaint.status = status;
+    complaint.assignedBy = supervisor._id;
+
     await complaint.save();
 
     return res.status(200).json({
       success: true,
-      message: "Status updated",
+      message: "Complaint status updated",
       complaint,
     });
-
   } catch (error) {
-    console.error(error);
+    console.error("updateComplaintStatus error:", error);
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: "Server error",
     });
   }
 };

@@ -49,12 +49,15 @@ export const isStudent = async (req, res, next) => {
 
 export const isSupervisor = async (req, res, next) => {
   try {
+   
     if (req.user.role !== "Supervisor") {
       return res.status(401).json({
         success: false,
         message: "Route not allowed to supervisor",
       });
     }
+     console.log("hii after isSupervisor middleware");
+
     next();
   } catch (error) {
     return res.status(500).json({

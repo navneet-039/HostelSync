@@ -31,20 +31,31 @@ export const getAllStudentComplaints = async (req, res) => {
 
 export const getSupervisorComplaints = async (req, res) => {
   try {
+
     const supervisor = await User.findById(req.user.id);
 
-    if (!supervisor || !supervisor.hostel) {
+    if (!supervisor || supervisor.role !== "Supervisor") {
+      return res.status(403).json({
+        success: false,
+        message: "Access denied",
+      });
+    }
+
+    if (!supervisor.supervisorOfHostel) {
       return res.status(400).json({
         success: false,
-        message: "Supervisor hostel information missing",
+        message: "Supervisor hostel not assigned",
       });
     }
 
     const complaints = await Complaint.find({
-      hostel: supervisor.hostel,
+      hostel: supervisor.supervisorOfHostel,
       status: { $in: ["Pending", "In_progress"] },
     })
-      .populate("student", "registrationNumber roomNumber floor")
+      .populate(
+        "student",
+        "name registrationNumber roomNumber floor"
+      )
       .sort({ createdAt: -1 });
 
     return res.status(200).json({
@@ -53,7 +64,7 @@ export const getSupervisorComplaints = async (req, res) => {
     });
 
   } catch (error) {
-    console.error(error);
+    console.error(" getSupervisorComplaints error:", error);
     return res.status(500).json({
       success: false,
       message: "Server error",
