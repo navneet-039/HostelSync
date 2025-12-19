@@ -11,6 +11,7 @@ import RegisterComplaint from "./pages/regsiterComplaint";
 import Garima from "./pages/checking.jsx"
 
 
+
 function App() {
   return (
     <AuthContextProvider>
@@ -45,8 +46,9 @@ function App() {
               
             }
           />
-
           
+
+        
          
         </Routes>
       </AppContextProvider>

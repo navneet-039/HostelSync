@@ -1,5 +1,5 @@
  import React, { useContext, useEffect, useState } from "react";
-import Navbar from "../components/navbar";
+
 import AuthContext from "../context/authContext";
 import api from "../api/axios";
 import { useNavigate } from "react-router-dom";
@@ -16,7 +16,7 @@ export default function Garima() {
     if (!loading && user?.role !== "Supervisor") {
       toast.error("Unauthorized access");
       console.log("hi garima");
-      navigate("/hii "); // Or redirect to login/home
+      navigate("/garima"); // Or redirect to login/home
     }
   }, [user, loading, navigate]);
 
@@ -45,7 +45,7 @@ export default function Garima() {
 
   return (
     <div className="min-h-screen flex flex-col bg-richblack-5 font-inter">
-      <Navbar />
+    
 
       <section className="flex-1 flex flex-col items-center justify-center px-6 py-12">
         <h1 className="text-4xl md:text-5xl font-bold text-richblack-800 text-center mb-6">

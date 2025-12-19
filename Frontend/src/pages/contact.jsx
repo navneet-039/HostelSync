@@ -1,6 +1,6 @@
 import React from "react";
 import { MdEmail, MdPhone, MdLocationOn, MdSupportAgent } from "react-icons/md";
-import Navbar from "../components/navbar";
+import Navbar from "../components/Navbar";
 
 export default function Contact() {
   return (

@@ -5,7 +5,7 @@ import { FiAlertCircle } from "react-icons/fi";
 import { MdElectricalServices, MdWaterDrop, MdChair, MdCleaningServices } from "react-icons/md";
 
 import api from "../api/axios";
-import Navbar from "../components/navbar";
+import Navbar from "../components/Navbar";
 
 export default function RegisterComplaint() {
   const navigate = useNavigate();
