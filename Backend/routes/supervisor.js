@@ -5,6 +5,6 @@ import { auth, isStudent, isSupervisor } from "../middlewares/Auth.js";
 const router = express.Router();
 
 router.get("/student/complaints", auth, isStudent, getAllStudentComplaints);
-router.get("/supervisor/complaints", auth, isSupervisor, getSupervisorComplaints);
+router.get("/hostel/complaints", auth, isSupervisor, getSupervisorComplaints);
 
 export default router;

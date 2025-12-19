@@ -56,6 +56,13 @@ export default function Garima() {
         <p className="text-lg text-richblack-500 mb-8 text-center max-w-2xl">
           As a supervisor, you can view and manage complaints submitted by students. You cannot register complaints.
         </p>
+        <button
+  onClick={() => navigate("/supervisor")}
+  className="px-4 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition"
+>
+  View Complaint
+</button>
+
 
         {complaints.length === 0 ? (
           <p className="text-richblack-500">No complaints available.</p>

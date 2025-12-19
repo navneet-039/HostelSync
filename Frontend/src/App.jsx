@@ -1,57 +1,68 @@
 import { Routes, Route } from "react-router-dom";
 import { AuthContextProvider } from "./context/authContext";
 import AppContextProvider from "./context/appContext";
-import Contact from "./pages/contact";
+
+import ProtectedRoute from "./components/protectedRoute";
 
 import Home from "./pages/homePage";
 import Login from "./pages/login";
+import Contact from "./pages/contact";
 import StudentRegisteredComplaint from "./pages/StudentRegisteredComplaint";
-import ProtectedRoute from "./components/protectedRoute";
 import RegisterComplaint from "./pages/regsiterComplaint";
-import Garima from "./pages/checking.jsx"
+import Garima from "./pages/checking.jsx";
 
-
+import SupervisorContextProvider from "./context/SupervisorContext";
+import SupervisorDashboard from "./pages/supervisorComplaint";
 
 function App() {
   return (
     <AuthContextProvider>
-      <AppContextProvider>
-        <Routes>
-          <Route path="/garima" element={<Garima />} />
-          
-          <Route path="/" element={<Home />} />
-          
-          <Route path="/login" element={<Login />} />
-          <Route
-            path="/all-complaints"
-            element={
-              <ProtectedRoute>
-                <StudentRegisteredComplaint />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/register-complaints"
-            element={
-              <ProtectedRoute>
-                <RegisterComplaint />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/contact"
-            element={
-              
-                <Contact />
-              
-            }
-          />
-          
 
-        
-         
-        </Routes>
-      </AppContextProvider>
+      <Routes>
+
+        {/* PUBLIC ROUTES */}
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/garima" element={<Garima />} />
+
+        {/* STUDENT ROUTES */}
+        <Route
+          path="/all-complaints"
+          element={
+            <ProtectedRoute>
+              <AppContextProvider>
+                <StudentRegisteredComplaint />
+              </AppContextProvider>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/register-complaints"
+          element={
+            <ProtectedRoute>
+              <AppContextProvider>
+                <RegisterComplaint />
+              </AppContextProvider>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* SUPERVISOR ROUTE */}
+        <Route
+          path="/supervisor"
+          element={
+            <ProtectedRoute roles={["Supervisor"]}>
+              <SupervisorContextProvider>
+                <SupervisorDashboard />
+              </SupervisorContextProvider>
+            </ProtectedRoute>
+          }
+        />
+
+      </Routes>
+
     </AuthContextProvider>
   );
 }
