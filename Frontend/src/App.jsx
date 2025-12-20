@@ -12,7 +12,7 @@ import RegisterComplaint from "./pages/regsiterComplaint";
 
 import SupervisorContextProvider from "./context/SupervisorContext";
 import SupervisorComplaint from "./pages/supervisorComplaint";
-
+import RegisterStudent from "./pages/registerStudent";
 function App() {
   return (
     <AuthContextProvider>
@@ -56,6 +56,15 @@ function App() {
               <SupervisorContextProvider>
                 <SupervisorComplaint />
               </SupervisorContextProvider>
+            </ProtectedRoute>
+          }
+        />
+        {/* ADMIN ROUTE – REGISTER STUDENT */}
+        <Route
+          path="/register-student"
+          element={
+            <ProtectedRoute roles={["Supervisor"]}>
+              <RegisterStudent />
             </ProtectedRoute>
           }
         />

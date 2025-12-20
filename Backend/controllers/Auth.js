@@ -66,6 +66,7 @@ export const loginController = async (req, res) => {
 
 export const registerStudent = async (req, res) => {
   try {
+    console.log("hi register student");
     const { name, registrationNumber, email, password, hostel, room } =
       req.body;
 
@@ -83,7 +84,12 @@ export const registerStudent = async (req, res) => {
         message: "User already registered",
       });
     }
-   
+   const hostelDoc = await Hostel.findOne({ name: hostel });
+
+    if (!hostelDoc) {
+      return res.status(400).json({ message: "Invalid hostel selected" });
+    }
+
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -92,7 +98,7 @@ export const registerStudent = async (req, res) => {
       registrationNumber,
       email,
       password: hashedPassword,
-      hostel,
+      hostel:hostelDoc._id ,
       room,
       role: "Student",
     });

@@ -54,7 +54,7 @@ export default function SupervisorHomePage() {
             icon={<FiUserPlus size={34} />}
             title="Register Student"
             description="Add new students and assign rooms"
-            onClick={() => toast("Student registration page coming soon")}
+            onClick={() => navigate("/register-student")}
           />
 
           {/* VIEW STUDENTS */}
