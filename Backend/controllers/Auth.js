@@ -67,8 +67,8 @@ export const loginController = async (req, res) => {
 export const registerStudent = async (req, res) => {
   try {
     console.log("hi register student");
-    const { name, registrationNumber, email, password, room } =
-      req.body;
+
+    const { name, registrationNumber, email, password, room } = req.body;
 
     if (!name || !registrationNumber || !email || !password || !room) {
       return res.status(400).json({
@@ -84,14 +84,30 @@ export const registerStudent = async (req, res) => {
         message: "User already registered",
       });
     }
-   
-       const supervisor = await User.findById(req.user.id);
-   console.log("garima")
+
+    const supervisor = await User.findById(req.user.id)
+      .populate("supervisorOfHostel");
 
     if (!supervisor) {
-      return res.status(400).json({ message: "Invalid hostel selected" });
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      });
     }
 
+    if (supervisor.role !== "Supervisor") {
+      return res.status(403).json({
+        success: false,
+        message: "Only supervisors can register students",
+      });
+    }
+
+    if (!supervisor.supervisorOfHostel) {
+      return res.status(400).json({
+        success: false,
+        message: "Supervisor hostel not assigned",
+      });
+    }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -100,7 +116,7 @@ export const registerStudent = async (req, res) => {
       registrationNumber,
       email,
       password: hashedPassword,
-      hostel:supervisor.supervisorOfHostel,
+      hostel: supervisor.supervisorOfHostel._id,
       room,
       role: "Student",
     });
@@ -116,7 +132,7 @@ export const registerStudent = async (req, res) => {
       resetLink
     );
 
-    await sendMail(newStudent.email, "Registration Successful", html);
+    await sendMail(email, "Registration Successful", html);
 
     return res.status(201).json({
       success: true,
@@ -126,12 +142,13 @@ export const registerStudent = async (req, res) => {
         name: newStudent.name,
         email: newStudent.email,
         registrationNumber: newStudent.registrationNumber,
-        hostel: newStudent.hostel,
+        hostel: supervisor.supervisorOfHostel.name,
         room: newStudent.room,
       },
     });
+
   } catch (error) {
-    console.log("Registration Error:", error);
+    console.error("Registration Error:", error);
     return res.status(500).json({
       success: false,
       message: "Internal server error",
