@@ -14,19 +14,32 @@ const Navbar = () => {
     return () => (document.body.style.overflow = "auto");
   }, [showMenu]);
 
-  const links = [
+  // ---------------- ROLE BASED LINKS ----------------
+  const studentLinks = [
     { to: "/", label: "HOME" },
     { to: "/register-complaints", label: "REGISTER COMPLAINTS" },
     { to: "/all-complaints", label: "ALL COMPLAINTS" },
     { to: "/contact", label: "CONTACT" },
   ];
 
-  const linkClasses = "py-1 text-richblack-600 hover:text-blue-200 transition-colors duration-200";
+  const supervisorLinks = [
+    { to: "/", label: "HOME" },
+    { to: "/supervisor", label: "STUDENT COMPLAINTS" },
+    { to: "/register-student", label: "REGISTER STUDENT" },
+  ];
+
+  const links =
+    user?.role === "Supervisor" ? supervisorLinks : studentLinks;
+
+  // ---------------- STYLES ----------------
+  const linkClasses =
+    "py-1 text-richblack-600 hover:text-blue-200 transition-colors duration-200";
   const activeClasses = "text-blue-200 border-b-2 border-blue-200";
 
   return (
     <div className="border-b border-pure-greys-25 bg-white">
       <div className="flex items-center justify-between h-16 px-6 max-w-7xl mx-auto font-inter">
+        {/* LOGO */}
         <img
           onClick={() => navigate("/")}
           className="w-32 cursor-pointer"
@@ -34,6 +47,7 @@ const Navbar = () => {
           alt="Hostel Logo"
         />
 
+        {/* DESKTOP LINKS */}
         <ul className="hidden md:flex items-center gap-10 font-medium">
           {links.map((item) => (
             <NavLink
@@ -48,12 +62,15 @@ const Navbar = () => {
           ))}
         </ul>
 
+        {/* DESKTOP AUTH */}
         <div className="hidden md:flex items-center gap-4">
           {loading ? (
             <span className="text-gray-400 font-medium">Loading...</span>
           ) : user ? (
             <>
-              <span className="text-richblack-700 font-medium">Hi, {user.name}</span>
+              <span className="text-richblack-700 font-medium">
+                Hi, {user.name}
+              </span>
               <button
                 onClick={logout}
                 className="px-4 py-1.5 rounded-lg bg-blue-200 text-white hover:bg-blue-300 transition"
@@ -71,12 +88,24 @@ const Navbar = () => {
           )}
         </div>
 
+        {/* MOBILE MENU ICON */}
         <div className="md:hidden text-richblack-700">
-          <AiOutlineMenu size={26} className="cursor-pointer" onClick={() => setShowMenu(true)} />
+          <AiOutlineMenu
+            size={26}
+            className="cursor-pointer"
+            onClick={() => setShowMenu(true)}
+          />
         </div>
 
-        {showMenu && <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-30 md:hidden" onClick={() => setShowMenu(false)} />}
+        {/* MOBILE OVERLAY */}
+        {showMenu && (
+          <div
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-30 md:hidden"
+            onClick={() => setShowMenu(false)}
+          />
+        )}
 
+        {/* MOBILE DRAWER */}
         <div
           className={`md:hidden fixed top-0 right-0 h-full w-[80%] max-w-sm bg-richblack-5 z-40 transition-transform duration-300 ${
             showMenu ? "translate-x-0" : "translate-x-full"
@@ -84,24 +113,49 @@ const Navbar = () => {
         >
           <div className="flex items-center justify-between px-5 py-4 border-b">
             <img src={hostelLogo} className="w-28" alt="Hostel Logo" />
-            <AiOutlineClose size={26} className="cursor-pointer text-richblack-700" onClick={() => setShowMenu(false)} />
+            <AiOutlineClose
+              size={26}
+              className="cursor-pointer text-richblack-700"
+              onClick={() => setShowMenu(false)}
+            />
           </div>
 
+          {/* MOBILE LINKS */}
           <ul className="flex flex-col items-center gap-6 mt-8 text-lg font-medium">
             {links.map((item) => (
-              <NavLink key={item.to} to={item.to} onClick={() => setShowMenu(false)} className="w-full text-center">
-                <li className="mx-6 py-3 rounded-xl hover:bg-blue-5 hover:text-blue-200 transition">{item.label}</li>
+              <NavLink
+                key={item.to}
+                to={item.to}
+                onClick={() => setShowMenu(false)}
+                className="w-full text-center"
+              >
+                <li className="mx-6 py-3 rounded-xl hover:bg-blue-5 hover:text-blue-200 transition">
+                  {item.label}
+                </li>
               </NavLink>
             ))}
 
+            {/* MOBILE AUTH */}
             {loading ? (
               <span className="text-gray-400 mt-4">Loading...</span>
             ) : user ? (
-              <button onClick={() => { logout(); setShowMenu(false); }} className="mt-4 w-4/5 py-3 rounded-xl bg-blue-200 text-white">
+              <button
+                onClick={() => {
+                  logout();
+                  setShowMenu(false);
+                }}
+                className="mt-4 w-4/5 py-3 rounded-xl bg-blue-200 text-white"
+              >
                 Logout
               </button>
             ) : (
-              <button onClick={() => { navigate("/login"); setShowMenu(false); }} className="mt-4 w-4/5 py-3 rounded-xl bg-blue-200 text-white">
+              <button
+                onClick={() => {
+                  navigate("/login");
+                  setShowMenu(false);
+                }}
+                className="mt-4 w-4/5 py-3 rounded-xl bg-blue-200 text-white"
+              >
                 Login
               </button>
             )}

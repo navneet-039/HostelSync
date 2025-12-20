@@ -29,7 +29,7 @@ export default function Login() {
 
       toast.success("Login successful");
       if (userRole === "Student") navigate("/");
-else if (userRole === "Supervisor") navigate("/garima ");
+else if (userRole === "Supervisor") navigate("/");
 else if (userRole === "admin") navigate("/admin-dashboard");
       //navigate("/"); // Redirect to home
     } catch (err) {
