@@ -67,10 +67,10 @@ export const loginController = async (req, res) => {
 export const registerStudent = async (req, res) => {
   try {
     console.log("hi register student");
-    const { name, registrationNumber, email, password, hostel, room } =
+    const { name, registrationNumber, email, password, room } =
       req.body;
 
-    if (!name || !registrationNumber || !email || !password || !hostel || !room) {
+    if (!name || !registrationNumber || !email || !password || !room) {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
@@ -84,9 +84,11 @@ export const registerStudent = async (req, res) => {
         message: "User already registered",
       });
     }
-   const hostelDoc = await Hostel.findOne({ name: hostel });
+   
+       const supervisor = await User.findById(req.user.id);
+   console.log("garima")
 
-    if (!hostelDoc) {
+    if (!supervisor) {
       return res.status(400).json({ message: "Invalid hostel selected" });
     }
 
@@ -98,7 +100,7 @@ export const registerStudent = async (req, res) => {
       registrationNumber,
       email,
       password: hashedPassword,
-      hostel:hostelDoc._id ,
+      hostel:supervisor.supervisorOfHostel,
       room,
       role: "Student",
     });
@@ -109,7 +111,7 @@ export const registerStudent = async (req, res) => {
       email,
       password,
       registrationNumber,
-      hostel,
+      supervisor.supervisorOfHostel.name,
       room,
       resetLink
     );

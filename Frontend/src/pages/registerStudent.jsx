@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import api from "../api/axios";
+import Navbar from "../components/Navbar";
 
 export default function RegisterStudent() {
   const navigate = useNavigate();
@@ -24,7 +25,7 @@ export default function RegisterStudent() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); 
+    e.preventDefault();
 
     try {
       setLoading(true);
@@ -37,7 +38,6 @@ export default function RegisterStudent() {
 
       toast.success(res.data.message || "Student registered successfully");
 
-      // Clear form
       setFormData({
         name: "",
         registrationNumber: "",
@@ -47,9 +47,7 @@ export default function RegisterStudent() {
         room: "",
       });
 
-      // Redirect supervisor
       navigate("/supervisor");
-
     } catch (error) {
       toast.error(
         error.response?.data?.message || "Registration failed"
@@ -60,84 +58,92 @@ export default function RegisterStudent() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-100">
-      <div className="w-full max-w-md bg-white p-8 rounded-xl shadow">
-        <h2 className="text-2xl font-semibold text-center mb-6">
-          Register Student
-        </h2>
+    <>
+      <Navbar />
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="min-h-screen bg-slate-100 flex items-center justify-center px-4 py-10">
+        <div className="w-full max-w-lg bg-white rounded-2xl shadow-lg p-8">
 
-          <input
-            type="text"
-            name="name"
-            placeholder="Student Name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-            className="w-full border px-3 py-2 rounded"
-          />
+          {/* Header */}
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold text-gray-800">
+              Student Registration
+            </h2>
+            <p className="text-sm text-gray-500 mt-1">
+              Enter student details carefully
+            </p>
+          </div>
 
-          <input
-            type="text"
-            name="registrationNumber"
-            placeholder="Registration Number"
-            value={formData.registrationNumber}
-            onChange={handleChange}
-            required
-            className="w-full border px-3 py-2 rounded"
-          />
+          <form onSubmit={handleSubmit} className="space-y-5">
 
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-            className="w-full border px-3 py-2 rounded"
-          />
+            <FormField
+              label="Student Name"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+            />
 
-          <input
-            type="password"
-            name="password"
-            placeholder="Temporary Password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-            className="w-full border px-3 py-2 rounded"
-          />
+            <FormField
+              label="Registration Number"
+              name="registrationNumber"
+              value={formData.registrationNumber}
+              onChange={handleChange}
+            />
 
-          <input
-            type="text"
-            name="hostel"
-            placeholder="Hostel Name"
-            value={formData.hostel}
-            onChange={handleChange}
-            required
-            className="w-full border px-3 py-2 rounded"
-          />
+            <FormField
+              label="Email Address"
+              name="email"
+              type="email"
+              value={formData.email}
+              onChange={handleChange}
+            />
 
-          <input
-            type="text"
-            name="room"
-            placeholder="Room Number"
-            value={formData.room}
-            onChange={handleChange}
-            required
-            className="w-full border px-3 py-2 rounded"
-          />
+            <FormField
+              label="Temporary Password"
+              name="password"
+              type="password"
+              value={formData.password}
+              onChange={handleChange}
+            />
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
-          >
-            {loading ? "Registering..." : "Register Student"}
-          </button>
+            
 
-        </form>
+            <FormField
+              label="Room Number"
+              name="room"
+              value={formData.room}
+              onChange={handleChange}
+            />
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-blue-600 text-white py-2.5 rounded-lg font-semibold
+                         hover:bg-blue-700 transition disabled:opacity-60"
+            >
+              {loading ? "Registering..." : "Register Student"}
+            </button>
+          </form>
+        </div>
       </div>
+    </>
+  );
+}
+
+/* 🔁 Reusable Field Component */
+function FormField({ label, type = "text", ...props }) {
+  return (
+    <div>
+      <label className="block text-sm font-medium text-gray-700 mb-1">
+        {label}
+      </label>
+      <input
+        type={type}
+        required
+        {...props}
+        className="w-full border rounded-lg px-3 py-2
+                   focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
     </div>
   );
 }
