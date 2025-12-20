@@ -105,7 +105,7 @@ export const registerStudent = async (req, res) => {
       role: "Student",
     });
 
-    const resetLink = `https://localhost:5000/reset-password?email=${email}`;
+    const resetLink = `http://localhost:5173/reset-password?email=${email}`;
 
     const html = registerStudentTemplate(
       email,
