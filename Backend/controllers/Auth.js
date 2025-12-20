@@ -142,7 +142,9 @@ export const registerStudent = async (req, res) => {
 
 export const changePassword = async (req, res) => {
   try {
+    console.log("hii from change pass");
     const { email, oldPassword, newPassword } = req.body;
+    console.log("hii after change pass");
 
     const existingUser = await User.findOne({ email });
     if (!existingUser) {

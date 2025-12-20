@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.post("/login", loginController);
 router.post("/register",auth,isSupervisor, registerStudent);
-router.patch("/change-password", auth,isStudent, changePassword);
+router.post("/change-password", changePassword);
 router.get("/refresh-token", refreshAccessToken);
 router.post("/create-supervisor",createSupervisor);
 router.post("/create-hostel",createHostel);
