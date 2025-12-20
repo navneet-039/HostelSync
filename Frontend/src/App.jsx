@@ -7,25 +7,25 @@ import ProtectedRoute from "./components/protectedRoute";
 import RoleBasedHome from "./pages/roleBasedHome";
 import Login from "./pages/login";
 import Contact from "./pages/contact";
+
 import StudentRegisteredComplaint from "./pages/StudentRegisteredComplaint";
 import RegisterComplaint from "./pages/regsiterComplaint";
+import ChangePassword from "./pages/changepass";
 
 import SupervisorContextProvider from "./context/SupervisorContext";
 import SupervisorComplaint from "./pages/supervisorComplaint";
 import RegisterStudent from "./pages/registerStudent";
+
 function App() {
   return (
     <AuthContextProvider>
       <Routes>
 
-        {/* ROLE BASED HOME */}
         <Route path="/" element={<RoleBasedHome />} />
-
-        {/* PUBLIC */}
         <Route path="/login" element={<Login />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/reset-password" element={<ChangePassword />} />
 
-        {/* STUDENT ROUTES */}
         <Route
           path="/all-complaints"
           element={
@@ -48,7 +48,15 @@ function App() {
           }
         />
 
-        {/* SUPERVISOR ROUTE */}
+        <Route
+          path="/change-password"
+          element={
+            <ProtectedRoute roles={["Student"]}>
+              <ChangePassword />
+            </ProtectedRoute>
+          }
+        />
+
         <Route
           path="/supervisor"
           element={
@@ -59,7 +67,7 @@ function App() {
             </ProtectedRoute>
           }
         />
-        {/* ADMIN ROUTE – REGISTER STUDENT */}
+
         <Route
           path="/register-student"
           element={
