@@ -16,7 +16,10 @@ const SupervisorContextProvider = ({ children }) => {
 
     setDataLoading(true);
     try {
+      console.log("hii before api call");
       const { data } = await api.get("/api/supervisor/hostel/complaints");
+      console.log("hii after api call");
+      console.log(data);
 
       setComplaints(data.complaints || []);
     } catch (err) {
