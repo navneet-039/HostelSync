@@ -4,7 +4,6 @@ import AppContextProvider from "./context/appContext";
 
 import ProtectedRoute from "./components/protectedRoute";
 
-import RoleBasedHome from "./pages/roleBasedHome";
 import Login from "./pages/login";
 import Contact from "./pages/contact";
 
@@ -16,12 +15,13 @@ import SupervisorContextProvider from "./context/SupervisorContext";
 import SupervisorComplaint from "./pages/supervisorComplaint";
 import RegisterStudent from "./pages/registerStudent";
 import SupervisorStudents from "./pages/allStudents";
+import Home from "./pages/homePage";
 
 function App() {
   return (
     <AuthContextProvider>
       <Routes>
-        <Route path="/" element={<RoleBasedHome />} />
+        <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/reset-password" element={<ChangePassword />} />
