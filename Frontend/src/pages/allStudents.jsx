@@ -16,13 +16,10 @@ export default function SupervisorStudents() {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // ---------------- FETCH STUDENTS ----------------
   const fetchStudents = async () => {
     try {
       setLoading(true);
       const res = await api.get("/api/supervisor/Allstudent");
-     
-
 
       if (res.data.success) {
         setStudents(res.data.students);
@@ -40,9 +37,9 @@ export default function SupervisorStudents() {
 
   if (loading) {
     return (
-      <p className="text-center mt-24 text-xl font-medium text-richblack-500">
-        Loading students...
-      </p>
+      <div className="flex justify-center items-center min-h-screen">
+        <CircularProgress />
+      </div>
     );
   }
 
@@ -50,43 +47,54 @@ export default function SupervisorStudents() {
     <div className="min-h-screen bg-richblack-5">
       <Navbar />
 
-      <div className="max-w-6xl mx-auto px-4 py-10">
+      <div className="max-w-7xl mx-auto px-4 py-10">
         <h2 className="text-3xl font-bold tracking-tight mb-8 text-richblack-900">
           Hostel Students
         </h2>
 
         {students.length === 0 ? (
-          <p className="text-richblack-600 font-medium">
-            No students found
-          </p>
+          <p className="text-richblack-600 font-medium">No students found</p>
         ) : (
-          <TableContainer component={Paper} className="rounded-2xl shadow-lg">
-            <Table sx={{ minWidth: 600 }}>
+          <TableContainer
+            component={Paper}
+            className="rounded-2xl shadow-lg overflow-x-auto"
+          >
+            <Table sx={{ minWidth: 900 }}>
               <TableHead>
                 <TableRow sx={{ backgroundColor: "#ECF5FF" }}>
                   <TableCell sx={headCell}>Name</TableCell>
-                  <TableCell sx={headCell}>Room Number</TableCell>
+                  <TableCell sx={headCell}>Email</TableCell>
+                  <TableCell sx={headCell}>Phone</TableCell>
+                  <TableCell sx={headCell}>Reg. No</TableCell>
+                  <TableCell sx={headCell}>Room</TableCell>
+                  <TableCell sx={headCell}>Floor</TableCell>
+                  <TableCell sx={headCell}>Branch</TableCell>
+                  <TableCell sx={headCell}>Year</TableCell>
+                  <TableCell sx={headCell}>Hostel</TableCell>
                 </TableRow>
               </TableHead>
 
-<TableBody>
-  {students.map((student) => (
-    <TableRow
-      key={student._id}
-      hover
-      sx={{ transition: "background-color 0.2s" }}
-    >
-      <TableCell sx={bodyCell}>
-        {student.name}
-      </TableCell>
-
-      <TableCell sx={bodyCell}>
-        {student.roomNumber}
-      </TableCell>
-    </TableRow>
-  ))}
-</TableBody>
-
+              <TableBody>
+                {students.map((student) => (
+                  <TableRow
+                    key={student._id}
+                    hover
+                    sx={{ transition: "background-color 0.2s" }}
+                  >
+                    <TableCell sx={bodyCell}>{student.name}</TableCell>
+                    <TableCell sx={bodyCell}>{student.email}</TableCell>
+                    <TableCell sx={bodyCell}>{student.phone}</TableCell>
+                    <TableCell sx={bodyCell}>{student.registrationNumber}</TableCell>
+                    <TableCell sx={bodyCell}>{student.roomNumber}</TableCell>
+                    <TableCell sx={bodyCell}>{student.floor || "-"}</TableCell>
+                    <TableCell sx={bodyCell}>{student.branch}</TableCell>
+                    <TableCell sx={bodyCell}>{student.year}</TableCell>
+                    <TableCell sx={bodyCell}>
+                      {student.hostel?.name || "-"}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
             </Table>
           </TableContainer>
         )}
@@ -97,8 +105,8 @@ export default function SupervisorStudents() {
 
 // ---------------- STYLES ----------------
 const headCell = {
-  fontSize: "1.05rem",
-  fontWeight: 800,
+  fontSize: "1rem",
+  fontWeight: 700,
   color: "#073B4C",
 };
 

@@ -17,12 +17,10 @@ import SupervisorComplaint from "./pages/supervisorComplaint";
 import RegisterStudent from "./pages/registerStudent";
 import SupervisorStudents from "./pages/allStudents";
 
-
 function App() {
   return (
     <AuthContextProvider>
       <Routes>
-
         <Route path="/" element={<RoleBasedHome />} />
         <Route path="/login" element={<Login />} />
         <Route path="/contact" element={<Contact />} />
@@ -79,17 +77,15 @@ function App() {
           }
         />
         <Route
-  path="/supervisor/students"
-  element={
-    <ProtectedRoute roles={["Supervisor"]}>
-      <SupervisorContextProvider>
-        <SupervisorStudents />
-      </SupervisorContextProvider>
-    </ProtectedRoute>
-  }
-/>
-
-
+          path="/supervisor/students"
+          element={
+            <ProtectedRoute roles={["Supervisor"]}>
+              <SupervisorContextProvider>
+                <SupervisorStudents />
+              </SupervisorContextProvider>
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </AuthContextProvider>
   );

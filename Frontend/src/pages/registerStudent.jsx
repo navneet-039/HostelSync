@@ -10,11 +10,14 @@ export default function RegisterStudent() {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
-    registrationNumber: "",
     email: "",
+    phone: "",
+    registrationNumber: "",
     password: "",
-    hostel: "",
-    room: "",
+    branch: "",
+    year: "",
+    roomNumber: "",
+    floor: "", // NEW FIELD
   });
 
   const handleChange = (e) => {
@@ -40,18 +43,19 @@ export default function RegisterStudent() {
 
       setFormData({
         name: "",
-        registrationNumber: "",
         email: "",
+        phone: "",
+        registrationNumber: "",
         password: "",
-        hostel: "",
-        room: "",
+        branch: "",
+        year: "",
+        roomNumber: "",
+        floor: "",
       });
 
       navigate("/supervisor");
     } catch (error) {
-      toast.error(
-        error.response?.data?.message || "Registration failed"
-      );
+      toast.error(error.response?.data?.message || "Registration failed");
     } finally {
       setLoading(false);
     }
@@ -62,9 +66,8 @@ export default function RegisterStudent() {
       <Navbar />
 
       <div className="min-h-screen bg-slate-100 flex items-center justify-center px-4 py-10">
-        <div className="w-full max-w-lg bg-white rounded-2xl shadow-lg p-8">
+        <div className="w-full max-w-2xl bg-white rounded-2xl shadow-lg p-8">
 
-          {/* Header */}
           <div className="text-center mb-8">
             <h2 className="text-2xl font-bold text-gray-800">
               Student Registration
@@ -74,55 +77,42 @@ export default function RegisterStudent() {
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-6">
 
-            <FormField
-              label="Student Name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-            />
+            {/* Name + Reg No */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <FormField label="Student Name" name="name" value={formData.name} onChange={handleChange} />
+              <FormField label="Registration Number" name="registrationNumber" value={formData.registrationNumber} onChange={handleChange} />
+            </div>
 
-            <FormField
-              label="Registration Number"
-              name="registrationNumber"
-              value={formData.registrationNumber}
-              onChange={handleChange}
-            />
+            {/* Email + Phone */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <FormField label="Email" name="email" type="email" value={formData.email} onChange={handleChange} />
+              <FormField label="Phone Number" name="phone" type="tel" value={formData.phone} onChange={handleChange} />
+            </div>
 
-            <FormField
-              label="Email Address"
-              name="email"
-              type="email"
-              value={formData.email}
-              onChange={handleChange}
-            />
+            {/* Branch + Year */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <FormField label="Branch" name="branch" value={formData.branch} onChange={handleChange} />
+              <FormField label="Year" name="year" value={formData.year} onChange={handleChange} />
+            </div>
 
-            <FormField
-              label="Temporary Password"
-              name="password"
-              type="password"
-              value={formData.password}
-              onChange={handleChange}
-            />
+            {/* Room Number + Floor */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <FormField label="Room Number" name="roomNumber" value={formData.roomNumber} onChange={handleChange} />
+              <FormField label="Floor" name="floor" value={formData.floor} onChange={handleChange} />
+            </div>
 
-            
-
-            <FormField
-              label="Room Number"
-              name="room"
-              value={formData.room}
-              onChange={handleChange}
-            />
+            <FormField label="Temporary Password" name="password" type="password" value={formData.password} onChange={handleChange} />
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-blue-600 text-white py-2.5 rounded-lg font-semibold
-                         hover:bg-blue-700 transition disabled:opacity-60"
+              className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 disabled:opacity-60"
             >
               {loading ? "Registering..." : "Register Student"}
             </button>
+
           </form>
         </div>
       </div>
@@ -130,7 +120,6 @@ export default function RegisterStudent() {
   );
 }
 
-/* 🔁 Reusable Field Component */
 function FormField({ label, type = "text", ...props }) {
   return (
     <div>
@@ -141,8 +130,7 @@ function FormField({ label, type = "text", ...props }) {
         type={type}
         required
         {...props}
-        className="w-full border rounded-lg px-3 py-2
-                   focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
       />
     </div>
   );
