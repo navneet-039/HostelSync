@@ -3,7 +3,7 @@ import { AuthContextProvider } from "./context/authContext";
 import AppContextProvider from "./context/appContext";
 
 import ProtectedRoute from "./components/protectedRoute";
-
+import RoleBasedHome from "./pages/rolebasedHomepage";
 import Login from "./pages/login";
 import Contact from "./pages/contact";
 
@@ -21,7 +21,7 @@ function App() {
   return (
     <AuthContextProvider>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<RoleBasedHome />} />
         <Route path="/login" element={<Login />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/reset-password" element={<ChangePassword />} />
