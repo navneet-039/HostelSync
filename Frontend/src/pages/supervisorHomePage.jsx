@@ -62,7 +62,7 @@ export default function SupervisorHomePage() {
             icon={<FiUsers size={34} />}
             title="All Students"
             description="View all registered students"
-            onClick={() => toast("Student list page coming soon")}
+            onClick={() => navigate("/supervisor/students")}
           />
 
         </div>

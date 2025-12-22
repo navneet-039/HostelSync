@@ -12,4 +12,5 @@ router.post("/create-supervisor",createSupervisor);
 router.post("/create-hostel",createHostel);
 router.post("/logout",logoutUser)
 
+
 export default router;

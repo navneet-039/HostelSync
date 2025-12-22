@@ -15,6 +15,8 @@ import ChangePassword from "./pages/changepass";
 import SupervisorContextProvider from "./context/SupervisorContext";
 import SupervisorComplaint from "./pages/supervisorComplaint";
 import RegisterStudent from "./pages/registerStudent";
+import SupervisorStudents from "./pages/allStudents";
+
 
 function App() {
   return (
@@ -76,6 +78,17 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+  path="/supervisor/students"
+  element={
+    <ProtectedRoute roles={["Supervisor"]}>
+      <SupervisorContextProvider>
+        <SupervisorStudents />
+      </SupervisorContextProvider>
+    </ProtectedRoute>
+  }
+/>
+
 
       </Routes>
     </AuthContextProvider>

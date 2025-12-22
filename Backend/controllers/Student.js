@@ -71,3 +71,42 @@ export const getSupervisorComplaints = async (req, res) => {
     });
   }
 };
+export const getAllStudent = async (req, res) => {
+  try {
+    const supervisor = await User.findById(req.user.id);
+
+    if (!supervisor || supervisor.role !== "Supervisor") {
+      return res.status(403).json({
+        success: false,
+        message: "Access denied",
+      });
+    }
+
+    const hostelId = supervisor.supervisorOfHostel;
+
+    if (!hostelId) {
+      return res.status(400).json({
+        success: false,
+        message: "Supervisor not assigned to any hostel",
+      });
+    }
+
+    const students = await User.find({
+      role: "Student",
+      hostel: hostelId,
+    }).select("name  roomNumber");   // 👈 ONLY these two fields
+
+    return res.status(200).json({
+      success: true,
+      count: students.length,
+      students,
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
