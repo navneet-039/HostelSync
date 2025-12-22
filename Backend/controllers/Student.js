@@ -94,7 +94,7 @@ export const getAllStudent = async (req, res) => {
     const students = await User.find({
       role: "Student",
       hostel: hostelId,
-    }).select("name  roomNumber");   // 👈 ONLY these two fields
+    }).select("name roomNumber");   // 👈 ONLY these two fields
 
     return res.status(200).json({
       success: true,

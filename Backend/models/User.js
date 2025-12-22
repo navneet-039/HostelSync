@@ -32,7 +32,7 @@ const UserSchema = new mongoose.Schema(
     // for students
     roomNumber: {
       type: String,
-      default: null,
+      default: "5",
     },
     floor: {
       type: String,

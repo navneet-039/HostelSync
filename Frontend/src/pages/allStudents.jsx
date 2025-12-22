@@ -21,6 +21,8 @@ export default function SupervisorStudents() {
     try {
       setLoading(true);
       const res = await api.get("/api/supervisor/Allstudent");
+     
+
 
       if (res.data.success) {
         setStudents(res.data.students);
@@ -67,23 +69,24 @@ export default function SupervisorStudents() {
                 </TableRow>
               </TableHead>
 
-              <TableBody>
-                {students.map((student) => (
-                  <TableRow
-                    key={student._id}
-                    hover
-                    sx={{ transition: "background-color 0.2s" }}
-                  >
-                    <TableCell sx={bodyCell}>
-                      {student.name}
-                    </TableCell>
+<TableBody>
+  {students.map((student) => (
+    <TableRow
+      key={student._id}
+      hover
+      sx={{ transition: "background-color 0.2s" }}
+    >
+      <TableCell sx={bodyCell}>
+        {student.name}
+      </TableCell>
 
-                    <TableCell sx={bodyCell}>
-                      {student.roomNumber}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
+      <TableCell sx={bodyCell}>
+        {student.roomNumber}
+      </TableCell>
+    </TableRow>
+  ))}
+</TableBody>
+
             </Table>
           </TableContainer>
         )}
