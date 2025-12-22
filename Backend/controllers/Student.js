@@ -71,6 +71,8 @@ export const getSupervisorComplaints = async (req, res) => {
     });
   }
 };
+
+
 export const getAllStudent = async (req, res) => {
   try {
     const supervisor = await User.findById(req.user.id);
@@ -91,10 +93,18 @@ export const getAllStudent = async (req, res) => {
       });
     }
 
+    // Fetch students and populate the hostel name
     const students = await User.find({
       role: "Student",
       hostel: hostelId,
-    }).select("name roomNumber");   // 👈 ONLY these two fields
+    })
+      .select(
+        "name email phone registrationNumber roomNumber floor branch year hostel"
+      )
+      .populate({
+        path: "hostel",
+        select: "name", // only get the hostel name
+      });
 
     return res.status(200).json({
       success: true,
@@ -103,10 +113,27 @@ export const getAllStudent = async (req, res) => {
     });
 
   } catch (error) {
-    console.error(error);
+    console.error("getAllStudent error:", error);
     res.status(500).json({
       success: false,
       message: "Server error",
     });
   }
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

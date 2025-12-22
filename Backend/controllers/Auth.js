@@ -66,36 +66,54 @@ export const loginController = async (req, res) => {
 
 export const registerStudent = async (req, res) => {
   try {
-    console.log("hi register student");
+    console.log("Register Student API");
 
-    const { name, registrationNumber, email, password, room } = req.body;
+    const {
+      name,
+      email,
+      phone,
+      registrationNumber,
+      password,
+      branch,
+      year,
+      roomNumber,
+      floor, // NEW FIELD
+    } = req.body;
 
-    if (!name || !registrationNumber || !email || !password || !room) {
+    // Validate all fields
+    if (
+      !name ||
+      !email ||
+      !phone ||
+      !registrationNumber ||
+      !password ||
+      !branch ||
+      !year ||
+      !roomNumber
+    ) {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
       });
     }
 
-    const existingUser = await User.findOne({ email });
+    // Check for existing user
+    const existingUser = await User.findOne({
+      $or: [{ email }, { registrationNumber }],
+    });
+
     if (existingUser) {
       return res.status(400).json({
         success: false,
-        message: "User already registered",
+        message: "Student already registered",
       });
     }
 
+    // Check supervisor
     const supervisor = await User.findById(req.user.id)
       .populate("supervisorOfHostel");
 
-    if (!supervisor) {
-      return res.status(401).json({
-        success: false,
-        message: "Unauthorized",
-      });
-    }
-
-    if (supervisor.role !== "Supervisor") {
+    if (!supervisor || supervisor.role !== "Supervisor") {
       return res.status(403).json({
         success: false,
         message: "Only supervisors can register students",
@@ -109,15 +127,21 @@ export const registerStudent = async (req, res) => {
       });
     }
 
+    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newStudent = await User.create({
+    // Create student
+    const student = await User.create({
       name,
-      registrationNumber,
       email,
+      phone,
+      registrationNumber,
       password: hashedPassword,
+      branch,
+      year,
+      roomNumber,
+      floor, // STORE FLOOR
       hostel: supervisor.supervisorOfHostel._id,
-      room,
       role: "Student",
     });
 
@@ -128,33 +152,39 @@ export const registerStudent = async (req, res) => {
       password,
       registrationNumber,
       supervisor.supervisorOfHostel.name,
-      room,
-      resetLink
+      roomNumber,
+      resetLink,
+      floor // optionally pass floor to template
     );
 
-    await sendMail(email, "Registration Successful", html);
+    await sendMail(email, "Student Registration Successful", html);
 
     return res.status(201).json({
       success: true,
       message: "Student registered successfully",
       student: {
-        id: newStudent._id,
-        name: newStudent.name,
-        email: newStudent.email,
-        registrationNumber: newStudent.registrationNumber,
+        id: student._id,
+        name: student.name,
+        email: student.email,
+        phone: student.phone,
+        registrationNumber: student.registrationNumber,
+        branch: student.branch,
+        year: student.year,
+        roomNumber: student.roomNumber,
+        floor: student.floor, // RETURN FLOOR
         hostel: supervisor.supervisorOfHostel.name,
-        room: newStudent.room,
       },
     });
 
   } catch (error) {
-    console.error("Registration Error:", error);
+    console.error("Register Student Error:", error);
     return res.status(500).json({
       success: false,
       message: "Internal server error",
     });
   }
 };
+
 
 
 export const changePassword = async (req, res) => {
