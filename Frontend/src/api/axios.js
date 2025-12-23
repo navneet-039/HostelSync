@@ -6,23 +6,34 @@ const api = axios.create({
   withCredentials: true,
 });
 
-// Request interceptor
+/* ================= REQUEST INTERCEPTOR ================= */
 api.interceptors.request.use((config) => {
   const token = getStoredAccessToken();
-  if (token) config.headers.Authorization = `Bearer ${token}`;
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
   return config;
 });
 
-// Response interceptor for 401
+/* ================= RESPONSE INTERCEPTOR ================= */
 api.interceptors.response.use(
   (res) => res,
   async (error) => {
     const originalReq = error.config;
 
-    if (error.response?.status === 401 && !originalReq._retry) {
+    // 🚨 VERY IMPORTANT GUARD
+    if (originalReq.url.includes("/refresh-token")) {
+      return Promise.reject(error);
+    }
+
+    if (
+      error.response?.status === 401 &&
+      !originalReq._retry
+    ) {
       originalReq._retry = true;
+
       try {
-        const res = await api.get("/api/users/refresh-token", { withCredentials: true });
+        const res = await api.get("/api/users/refresh-token");
 
         if (!res.data?.accessToken) {
           setStoredAccessToken(null);
@@ -30,7 +41,9 @@ api.interceptors.response.use(
         }
 
         setStoredAccessToken(res.data.accessToken);
-        originalReq.headers.Authorization = `Bearer ${res.data.accessToken}`;
+        originalReq.headers.Authorization =
+          `Bearer ${res.data.accessToken}`;
+
         return api(originalReq);
       } catch (err) {
         setStoredAccessToken(null);

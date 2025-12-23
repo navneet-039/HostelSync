@@ -3,45 +3,55 @@ import api from "../api/axios";
 
 const AuthContext = createContext(null);
 
+/* ================= ACCESS TOKEN IN MEMORY ================= */
 let accessTokenMemory = null;
 
+export const getStoredAccessToken = () => accessTokenMemory;
+export const setStoredAccessToken = (token) => {
+  accessTokenMemory = token;
+};
+
+/* ================= PROVIDER ================= */
 export const AuthContextProvider = ({ children }) => {
   const [accessToken, setAccessToken] = useState(null);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [authReady, setAuthReady] = useState(false);
 
+  /* ================= LOAD USER (RUNS ONCE) ================= */
   const loadUser = useCallback(async () => {
-    setLoading(true);
     try {
-      const res = await api.get("/api/users/refresh-token", { withCredentials: true });
+      const res = await api.get("/api/users/refresh-token");
 
       if (res.data?.accessToken && res.data?.user) {
         setAccessToken(res.data.accessToken);
         setUser(res.data.user);
-        accessTokenMemory = res.data.accessToken;
+        setStoredAccessToken(res.data.accessToken);
       } else {
         setAccessToken(null);
         setUser(null);
-        accessTokenMemory = null;
+        setStoredAccessToken(null);
       }
-    } catch (err) {
+    } catch {
       setAccessToken(null);
       setUser(null);
-      accessTokenMemory = null;
+      setStoredAccessToken(null);
     } finally {
       setLoading(false);
+      setAuthReady(true);
     }
   }, []);
 
+  /* ================= LOGOUT ================= */
   const logout = useCallback(async () => {
     try {
-      await api.post("/api/users/logout", {}, { withCredentials: true });
+      await api.post("/api/users/logout");
     } catch (err) {
       console.error(err);
     } finally {
       setAccessToken(null);
       setUser(null);
-      accessTokenMemory = null;
+      setStoredAccessToken(null);
     }
   }, []);
 
@@ -55,6 +65,7 @@ export const AuthContextProvider = ({ children }) => {
         accessToken,
         user,
         loading,
+        authReady,
         setAccessToken,
         setUser,
         logout,
@@ -65,8 +76,5 @@ export const AuthContextProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
-
-export const getStoredAccessToken = () => accessTokenMemory;
-export const setStoredAccessToken = (token) => (accessTokenMemory = token);
 
 export default AuthContext;
