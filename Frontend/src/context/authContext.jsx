@@ -24,11 +24,9 @@ export const AuthContextProvider = ({ children }) => {
       const res = await api.get("/api/users/refresh-token");
 
       if (res.data?.accessToken) {
-        // ✅ access token is enough to stay logged in
         setAccessToken(res.data.accessToken);
         setStoredAccessToken(res.data.accessToken);
 
-        // user is optional
         if (res.data.user) {
           setUser(res.data.user);
         }
@@ -38,7 +36,6 @@ export const AuthContextProvider = ({ children }) => {
         setStoredAccessToken(null);
       }
     } catch (err) {
-      // silent failure = not logged in
       setAccessToken(null);
       setUser(null);
       setStoredAccessToken(null);

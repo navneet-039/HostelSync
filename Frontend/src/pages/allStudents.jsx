@@ -103,7 +103,7 @@ export default function SupervisorStudents() {
   );
 }
 
-// ---------------- STYLES ----------------
+
 const headCell = {
   fontSize: "1rem",
   fontWeight: 700,

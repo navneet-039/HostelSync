@@ -26,13 +26,13 @@ const Navbar = () => {
     { to: "/", label: "HOME" },
     { to: "/supervisor", label: "STUDENT COMPLAINTS" },
     { to: "/register-student", label: "REGISTER STUDENT" },
-    {to:"/supervisor/students",label:"ALL STUDENTS"}
+    { to: "/supervisor/students", label: "ALL STUDENTS" },
   ];
 
   const links =
     user?.role === "Supervisor" ? supervisorLinks : studentLinks;
 
-  // ---------------- STYLES ----------------
+
   const linkClasses =
     "py-1 text-richblack-600 hover:text-blue-200 transition-colors duration-200";
   const activeClasses = "text-blue-200 border-b-2 border-blue-200";
@@ -54,8 +54,11 @@ const Navbar = () => {
             <NavLink
               key={item.to}
               to={item.to}
+              end={item.to === "/supervisor"}
               className={({ isActive }) =>
-                isActive ? `${linkClasses} ${activeClasses}` : linkClasses
+                isActive
+                  ? `${linkClasses} ${activeClasses}`
+                  : linkClasses
               }
             >
               <li>{item.label}</li>
@@ -127,6 +130,7 @@ const Navbar = () => {
               <NavLink
                 key={item.to}
                 to={item.to}
+                end={item.to === "/supervisor"}
                 onClick={() => setShowMenu(false)}
                 className="w-full text-center"
               >
