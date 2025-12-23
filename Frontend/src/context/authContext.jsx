@@ -18,21 +18,27 @@ export const AuthContextProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [authReady, setAuthReady] = useState(false);
 
-  /* ================= LOAD USER (RUNS ONCE) ================= */
+  /* ================= LOAD USER ================= */
   const loadUser = useCallback(async () => {
     try {
       const res = await api.get("/api/users/refresh-token");
 
-      if (res.data?.accessToken && res.data?.user) {
+      if (res.data?.accessToken) {
+        // ✅ access token is enough to stay logged in
         setAccessToken(res.data.accessToken);
-        setUser(res.data.user);
         setStoredAccessToken(res.data.accessToken);
+
+        // user is optional
+        if (res.data.user) {
+          setUser(res.data.user);
+        }
       } else {
         setAccessToken(null);
         setUser(null);
         setStoredAccessToken(null);
       }
-    } catch {
+    } catch (err) {
+      // silent failure = not logged in
       setAccessToken(null);
       setUser(null);
       setStoredAccessToken(null);
