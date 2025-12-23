@@ -10,7 +10,6 @@ import {
   generateRefreshToken,
 } from "../utils/tokenGenerator.js";
 
-
 export const loginController = async (req, res) => {
   try {
     console.log("hii");
@@ -49,20 +48,16 @@ export const loginController = async (req, res) => {
       message: "Login successful",
       accessToken,
       user: {
-    id: user._id,
-    email: user.email,
-    role: user.role
-  }
-
+        id: user._id,
+        email: user.email,
+        role: user.role,
+      },
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Internal server error" 
-
-    });
+    res.status(500).json({ message: "Internal server error" });
   }
 };
-
 
 export const registerStudent = async (req, res) => {
   try {
@@ -110,8 +105,9 @@ export const registerStudent = async (req, res) => {
     }
 
     // Check supervisor
-    const supervisor = await User.findById(req.user.id)
-      .populate("supervisorOfHostel");
+    const supervisor = await User.findById(req.user.id).populate(
+      "supervisorOfHostel"
+    );
 
     if (!supervisor || supervisor.role !== "Supervisor") {
       return res.status(403).json({
@@ -175,7 +171,6 @@ export const registerStudent = async (req, res) => {
         hostel: supervisor.supervisorOfHostel.name,
       },
     });
-
   } catch (error) {
     console.error("Register Student Error:", error);
     return res.status(500).json({
@@ -184,8 +179,6 @@ export const registerStudent = async (req, res) => {
     });
   }
 };
-
-
 
 export const changePassword = async (req, res) => {
   try {
@@ -232,63 +225,36 @@ export const changePassword = async (req, res) => {
 
 export const refreshAccessToken = async (req, res) => {
   try {
-    const oldRefreshToken = req.cookies.refreshToken;
+    const refreshToken = req.cookies.refreshToken;
 
-    if (!oldRefreshToken) {
-      return res.status(401).json({
-        success: false,
-        message: "Refresh token missing",
-      });
+    if (!refreshToken) {
+      return res.status(401).json({ message: "Refresh token missing" });
     }
 
     const decoded = jwt.verify(
-      oldRefreshToken,
+      refreshToken,
       process.env.REFRESH_TOKEN_SECRET
     );
 
     const user = await User.findById(decoded.id);
-
-    if (!user || user.refreshToken !== oldRefreshToken) {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid refresh token",
-      });
+    if (!user || user.refreshToken !== refreshToken) {
+      return res.status(401).json({ message: "Invalid refresh token" });
     }
 
-    const payload = {
-      email: user.email,
+    const accessToken = generateAccessToken({
       id: user._id,
+      email: user.email,
       role: user.role,
-    };
-
-    const newAccessToken = generateAccessToken(payload);
-    const newRefreshToken = generateRefreshToken(payload);
-
-    user.refreshToken = newRefreshToken;
-    await user.save();
-
-    res.cookie("refreshToken", newRefreshToken, {
-      httpOnly: true,
-      secure: false,      
-      sameSite: "lax",      
-      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    return res.status(200).json({
-      success: true,
-      accessToken: newAccessToken,
-      user
+    return res.json({
+      accessToken,
+      user,
     });
-  } catch (error) {
-    console.log(error);
-
-    return res.status(401).json({
-      success: false,
-      message: "Invalid or expired refresh token",
-    });
+  } catch {
+    return res.status(401).json({ message: "Invalid refresh token" });
   }
 };
-
 
 
 export const createSupervisor = async (req, res) => {
@@ -339,13 +305,14 @@ export const createSupervisor = async (req, res) => {
   }
 };
 
-
 export const createHostel = async (req, res) => {
   try {
     const { name, capacity } = req.body;
 
     if (!name || !capacity) {
-      return res.status(400).json({ message: "Name and capacity are required" });
+      return res
+        .status(400)
+        .json({ message: "Name and capacity are required" });
     }
 
     const existingHostel = await Hostel.findOne({ name });
@@ -379,13 +346,13 @@ export const logoutUser = async (req, res) => {
 
     const user = await User.findOne({ refreshToken });
     if (user) {
-      user.refreshToken = null; 
+      user.refreshToken = null;
       await user.save();
     }
 
     res.clearCookie("refreshToken", {
       httpOnly: true,
-      secure: false, 
+      secure: false,
       sameSite: "lax",
     });
 
@@ -395,5 +362,3 @@ export const logoutUser = async (req, res) => {
     res.status(500).json({ message: "Logout failed" });
   }
 };
-
-
