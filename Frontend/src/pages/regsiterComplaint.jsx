@@ -2,7 +2,12 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { FiAlertCircle } from "react-icons/fi";
-import { MdElectricalServices, MdWaterDrop, MdChair, MdCleaningServices } from "react-icons/md";
+import {
+  MdElectricalServices,
+  MdWaterDrop,
+  MdChair,
+  MdCleaningServices,
+} from "react-icons/md";
 
 import api from "../api/axios";
 import Navbar from "../components/Navbar";
@@ -23,16 +28,16 @@ export default function RegisterComplaint() {
     setLoading(true);
 
     try {
-      const res = await api.post(
-        "/api/complaints/register",
-        formData,
-        { withCredentials: true }
-      );
+      const res = await api.post("/api/complaints/register", formData, {
+        withCredentials: true,
+      });
 
       toast.success(res.data.message || "Complaint registered successfully");
       navigate("/all-complaints");
     } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to register complaint");
+      toast.error(
+        err.response?.data?.message || "Failed to register complaint"
+      );
     } finally {
       setLoading(false);
     }
@@ -45,10 +50,8 @@ export default function RegisterComplaint() {
       {/* Page background */}
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-gray-100 px-4 py-12">
         <div className="max-w-3xl mx-auto">
-
           {/* Card */}
           <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-
             {/* Header */}
             <div className="bg-blue-600 text-white px-8 py-6 flex items-center gap-4">
               <FiAlertCircle size={32} />
@@ -62,7 +65,6 @@ export default function RegisterComplaint() {
 
             {/* Form */}
             <form onSubmit={handleSubmit} className="p-8 space-y-6">
-
               {/* Title */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">

@@ -42,7 +42,9 @@ export default function Home() {
 
           <div className="hidden md:flex justify-center">
             <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
-              <h3 className="text-xl font-semibold text-richblack-700 mb-4">Why HostelSync?</h3>
+              <h3 className="text-xl font-semibold text-richblack-700 mb-4">
+                Why HostelSync?
+              </h3>
 
               <ul className="space-y-3 text-richblack-500">
                 <li>✔ Easy complaint registration</li>
@@ -58,7 +60,9 @@ export default function Home() {
       <footer className="bg-richblack-800 text-richblack-100">
         <div className="max-w-7xl mx-auto px-6 py-10 grid md:grid-cols-3 gap-8">
           <div>
-            <h3 className="text-xl font-semibold mb-3 text-white">HostelSync</h3>
+            <h3 className="text-xl font-semibold mb-3 text-white">
+              HostelSync
+            </h3>
             <p className="text-sm text-richblack-200">
               A smart hostel complaint management system designed to improve
               student experience and administration efficiency.
@@ -69,8 +73,12 @@ export default function Home() {
             <h4 className="font-semibold mb-3 text-white">Quick Links</h4>
             <ul className="space-y-2 text-sm text-richblack-200">
               <li className="hover:text-blue-200 cursor-pointer">Home</li>
-              <li className="hover:text-blue-200 cursor-pointer">Register Complaints</li>
-              <li className="hover:text-blue-200 cursor-pointer">All Complaints</li>
+              <li className="hover:text-blue-200 cursor-pointer">
+                Register Complaints
+              </li>
+              <li className="hover:text-blue-200 cursor-pointer">
+                All Complaints
+              </li>
               <li className="hover:text-blue-200 cursor-pointer">Contact</li>
             </ul>
           </div>

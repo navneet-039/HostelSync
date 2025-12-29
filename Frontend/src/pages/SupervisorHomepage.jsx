@@ -27,7 +27,6 @@ export default function SupervisorHomePage() {
       <Navbar />
 
       <div className="max-w-7xl mx-auto px-6 py-12">
-
         {/* HEADER */}
         <div className="text-center mb-14">
           <h1 className="text-4xl font-bold text-richblack-800">
@@ -40,7 +39,6 @@ export default function SupervisorHomePage() {
 
         {/* DASHBOARD CARDS */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-
           {/* VIEW COMPLAINTS */}
           <DashboardCard
             icon={<FiClipboard size={34} />}
@@ -64,7 +62,6 @@ export default function SupervisorHomePage() {
             description="View all registered students"
             onClick={() => navigate("/supervisor/students")}
           />
-
         </div>
 
         {/* INFO SECTION */}
@@ -78,7 +75,6 @@ export default function SupervisorHomePage() {
             efficiently. Students cannot resolve complaints themselves.
           </p>
         </div>
-
       </div>
     </div>
   );
@@ -96,13 +92,9 @@ function DashboardCard({ icon, title, description, onClick }) {
         {icon}
       </div>
 
-      <h3 className="text-xl font-semibold text-richblack-800">
-        {title}
-      </h3>
+      <h3 className="text-xl font-semibold text-richblack-800">{title}</h3>
 
-      <p className="text-richblack-500 mt-2">
-        {description}
-      </p>
+      <p className="text-richblack-500 mt-2">{description}</p>
     </div>
   );
 }
