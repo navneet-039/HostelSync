@@ -17,6 +17,7 @@ import RegisterStudent from "./pages/registerStudent";
 import SupervisorStudents from "./pages/allStudents";
 import Home from "./pages/homePage";
 import PublishNotice from "./pages/publishNotice";
+import NoticeBoard from "./pages/NoticeBoard"
 
 function App() {
   return (
@@ -95,6 +96,16 @@ function App() {
                 <PublishNotice />
               </SupervisorContextProvider>
             </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/notices"
+          element={
+           
+              <SupervisorContextProvider>
+                <NoticeBoard />
+              </SupervisorContextProvider>
+          
           }
         />
       </Routes>

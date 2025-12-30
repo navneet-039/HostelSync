@@ -40,11 +40,11 @@ const Navbar = () => {
 
   return (
     <div className="border-b border-pure-greys-25 bg-white">
-      <div className="flex items-center justify-between h-16 px-6 max-w-7xl mx-auto font-inter">
+      <div className="flex items-center justify-between h-28 px-6 max-w-7xl mx-auto font-inter">
         {/* LOGO */}
         <img
           onClick={() => navigate("/")}
-          className="w-32 cursor-pointer"
+          className="w-28 cursor-pointer"
           src={hostelLogo}
           alt="Hostel Logo"
         />
