@@ -1,6 +1,7 @@
 import User from "../models/User.js";
 import Hostel from "../models/Hostel.js";
 import Complaint from "../models/Complaint.js";
+import HostelNotice from "../models/Notice.js"
 
 
 export const getAllStudentComplaints = async (req, res) => {
@@ -123,45 +124,70 @@ export const getAllStudent = async (req, res) => {
 
 export const getNotice = async (req, res) => {
   try {
-    // 1️⃣ Fetch the user
+    // 1️⃣ Fetch logged-in user
     const user = await User.findById(req.user.id);
     if (!user) {
-      return res.status(404).json({ success: false, message: "User not found" });
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
     }
 
-    // 2️⃣ Determine the hostel based on role
+    // 2️⃣ Allow only Student & Supervisor
     let hostelId;
+
     if (user.role === "Student") {
       if (!user.hostel) {
-        return res.status(400).json({ success: false, message: "Student is not assigned to any hostel" });
+        return res.status(400).json({
+          success: false,
+          message: "Student is not assigned to any hostel",
+        });
       }
       hostelId = user.hostel;
-    } else if (user.role === "Supervisor") {
+    } 
+    else if (user.role === "Supervisor") {
       if (!user.supervisorOfHostel) {
-        return res.status(400).json({ success: false, message: "Supervisor is not assigned to any hostel" });
+        return res.status(400).json({
+          success: false,
+          message: "Supervisor is not assigned to any hostel",
+        });
       }
       hostelId = user.supervisorOfHostel;
-    } else {
-      return res.status(403).json({ success: false, message: "Role not allowed" });
+    } 
+    else {
+      return res.status(403).json({
+        success: false,
+        message: "Access denied",
+      });
     }
 
-    // 3️⃣ Fetch notices
+    // 3️⃣ Fetch only active + non-expired notices
     const notices = await HostelNotice.find({
       hostel: hostelId,
+      isActive: true,
       $or: [
-        { expiryDate: { $gte: new Date() } }, // active notices
-        { expiryDate: null }                  // notices with no expiry
-      ]
+        { expiryDate: { $gte: new Date() } }, // not expired
+        { expiryDate: null },                 // no expiry
+      ],
     })
       .sort({ createdAt: -1 })
-      .populate("publishedBy", "name role")  // supervisor info
-      .populate("hostel", "name");           // hostel info
+      .populate("publishedBy", "name role")
+      .populate("hostel", "name");
 
-    // 4️⃣ Return response
-    return res.status(200).json({ success: true, notices });
+    // 4️⃣ Send response
+    return res.status(200).json({
+      success: true,
+      count: notices.length,
+      notices,
+    });
 
   } catch (error) {
-    console.error("Fetch notice error:", error);
-    return res.status(500).json({ success: false, message: "Server error" });
+    console.error("Get Notice Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
   }
 };
+
+
