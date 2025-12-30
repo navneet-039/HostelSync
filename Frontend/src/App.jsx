@@ -15,7 +15,6 @@ import SupervisorContextProvider from "./context/SupervisorContext";
 import SupervisorComplaint from "./pages/supervisorComplaint";
 import RegisterStudent from "./pages/registerStudent";
 import SupervisorStudents from "./pages/allStudents";
-import Home from "./pages/homePage";
 import PublishNotice from "./pages/publishNotice";
 import NoticeBoard from "./pages/NoticeBoard"
 
@@ -88,26 +87,16 @@ function App() {
             </ProtectedRoute>
           }
         />
+        
         <Route
-          path="/publishNotice"
-          element={
-            <ProtectedRoute roles={["Supervisor"]}>
-              <SupervisorContextProvider>
-                <PublishNotice />
-              </SupervisorContextProvider>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/notices"
-          element={
-           
-              <SupervisorContextProvider>
-                <NoticeBoard />
-              </SupervisorContextProvider>
-          
-          }
-        />
+  path="/see-notice"
+  element={
+    <ProtectedRoute roles={["Student", "Supervisor"]}>
+      <NoticeBoard />
+    </ProtectedRoute>
+  }
+/>
+
       </Routes>
     </AuthContextProvider>
   );

@@ -19,6 +19,7 @@ const Navbar = () => {
     { to: "/", label: "HOME" },
     { to: "/register-complaints", label: "REGISTER COMPLAINTS" },
     { to: "/all-complaints", label: "ALL COMPLAINTS" },
+    { to: "/see-notice", label: "SEE NOTICES" },  // Added link
     { to: "/contact", label: "CONTACT" },
   ];
 
@@ -28,11 +29,10 @@ const Navbar = () => {
     { to: "/register-student", label: "REGISTER STUDENT" },
     { to: "/supervisor/students", label: "ALL STUDENTS" },
     { to: "/publishNotice", label: "PUBLISH NOTICE" },
+    { to: "/see-notice", label: "SEE NOTICES" },  // Added link
   ];
 
-  const links =
-    user?.role === "Supervisor" ? supervisorLinks : studentLinks;
-
+  const links = user?.role === "Supervisor" ? supervisorLinks : studentLinks;
 
   const linkClasses =
     "py-1 text-richblack-600 hover:text-blue-200 transition-colors duration-200";
@@ -40,11 +40,11 @@ const Navbar = () => {
 
   return (
     <div className="border-b border-pure-greys-25 bg-white">
-      <div className="flex items-center justify-between h-28 px-6 max-w-7xl mx-auto font-inter">
+      <div className="flex items-center justify-between h-16 px-6 max-w-7xl mx-auto font-inter">
         {/* LOGO */}
         <img
           onClick={() => navigate("/")}
-          className="w-28 cursor-pointer"
+          className="w-32 cursor-pointer"
           src={hostelLogo}
           alt="Hostel Logo"
         />
@@ -57,9 +57,7 @@ const Navbar = () => {
               to={item.to}
               end={item.to === "/supervisor"}
               className={({ isActive }) =>
-                isActive
-                  ? `${linkClasses} ${activeClasses}`
-                  : linkClasses
+                isActive ? `${linkClasses} ${activeClasses}` : linkClasses
               }
             >
               <li>{item.label}</li>
