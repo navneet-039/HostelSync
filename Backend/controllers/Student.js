@@ -121,6 +121,49 @@ export const getAllStudent = async (req, res) => {
   }
 };
 
+export const getNotice = async (req, res) => {
+  try {
+
+    const student = await User.findById(req.user.id);
+    if (!student) {
+      return res.status(404).json({
+        success: false,
+        message: "Student not found",
+      });
+    }
+
+    
+    if (!student.hostel) {
+      return res.status(400).json({
+        success: false,
+        message: "Student is not assigned to any hostel",
+      });
+    }
+
+    
+    const notices = await HostelNotice.find({
+      hostel: student.hostel,
+      $or: [
+        { expiryDate: { $gte: new Date() } }, 
+        { expiryDate: null }                 
+      ]
+    })
+      .sort({ createdAt: -1 }) 
+      .populate("title","description","publishedBy", "name role");
+
+    return res.status(200).json({
+      success: true,
+      notices,
+    });
+
+  } catch (error) {
+    console.error("Fetch notice error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
 
 
 
