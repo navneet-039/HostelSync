@@ -8,4 +8,5 @@ const router = express.Router();
 router.post("/register", auth,isStudent, registerComplaint);
 router.patch("/status/:complaintId", auth,isSupervisor, updateComplaintStatus,getAllStudent);
 
+
 export default router;
