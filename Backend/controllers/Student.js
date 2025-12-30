@@ -123,60 +123,45 @@ export const getAllStudent = async (req, res) => {
 
 export const getNotice = async (req, res) => {
   try {
-
+    // 1️⃣ Fetch the user
     const user = await User.findById(req.user.id);
     if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "user not found",
-      });
+      return res.status(404).json({ success: false, message: "User not found" });
     }
 
-    
-    if (!user.hostel) {
-      return res.status(400).json({
-        success: false,
-        message: "user hostel not there",
-      });
+    // 2️⃣ Determine the hostel based on role
+    let hostelId;
+    if (user.role === "Student") {
+      if (!user.hostel) {
+        return res.status(400).json({ success: false, message: "Student is not assigned to any hostel" });
+      }
+      hostelId = user.hostel;
+    } else if (user.role === "Supervisor") {
+      if (!user.supervisorOfHostel) {
+        return res.status(400).json({ success: false, message: "Supervisor is not assigned to any hostel" });
+      }
+      hostelId = user.supervisorOfHostel;
+    } else {
+      return res.status(403).json({ success: false, message: "Role not allowed" });
     }
 
-    
+    // 3️⃣ Fetch notices
     const notices = await HostelNotice.find({
-      hostel: user.hostel,
+      hostel: hostelId,
       $or: [
-        { expiryDate: { $gte: new Date() } }, 
-        { expiryDate: null }                 
+        { expiryDate: { $gte: new Date() } }, // active notices
+        { expiryDate: null }                  // notices with no expiry
       ]
     })
-      .sort({ createdAt: -1 }) 
-      .populate("title","description","publishedBy");
+      .sort({ createdAt: -1 })
+      .populate("publishedBy", "name role")  // supervisor info
+      .populate("hostel", "name");           // hostel info
 
-    return res.status(200).json({
-      success: true,
-      notices,
-    });
+    // 4️⃣ Return response
+    return res.status(200).json({ success: true, notices });
 
   } catch (error) {
     console.error("Fetch notice error:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Server error",
-    });
+    return res.status(500).json({ success: false, message: "Server error" });
   }
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
