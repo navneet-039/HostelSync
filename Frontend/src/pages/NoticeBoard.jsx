@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "../api/axios";
 import Navbar from "../components/Navbar";
+import { FiCalendar, FiUser } from "react-icons/fi";
 
 export default function NoticeBoard() {
   const [notices, setNotices] = useState([]);
@@ -10,12 +11,10 @@ export default function NoticeBoard() {
   useEffect(() => {
     const fetchNotices = async () => {
       try {
-        const res = await api.get("/api/supervisor/seeNotice"); 
-        setNotices(res.data.notices);
+        const res = await api.get("/api/supervisor/seeNotice");
+        setNotices(res.data.notices || []);
       } catch (err) {
-        setError(
-          err.response?.data?.message || "Failed to fetch notices"
-        );
+        setError(err.response?.data?.message || "Failed to fetch notices");
       } finally {
         setLoading(false);
       }
@@ -28,57 +27,83 @@ export default function NoticeBoard() {
     <>
       <Navbar />
 
-      <div className="min-h-screen bg-gray-100 pt-24 p-4">
+      {/* Page Background */}
+      <div className="min-h-screen bg-gradient-to-br from-richblue-5 to-pure-greys-5 pt-28 px-4 pb-10">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-6">
-            Hostel Notices
-          </h2>
+          
+          {/* Header */}
+          <div className="mb-8">
+            <h2 className="text-3xl font-semibold text-richblue-400">
+              Hostel Notice Board
+            </h2>
+            <p className="text-sm text-pure-greys-400 mt-1">
+              Important announcements and hostel updates
+            </p>
+          </div>
 
           {/* Loading */}
           {loading && (
-            <p className="text-gray-600">Loading notices...</p>
+            <div className="text-pure-greys-400">
+              Loading notices...
+            </div>
           )}
 
           {/* Error */}
           {error && (
-            <p className="text-red-600 text-sm">{error}</p>
+            <div className="bg-pink-5 border border-pink-50 text-pink-400 p-3 mb-4 text-sm">
+              {error}
+            </div>
           )}
 
-          {/* No Notices */}
+          {/* Empty */}
           {!loading && notices.length === 0 && (
-            <p className="text-gray-600">No notices available.</p>
+            <div className="bg-white border border-pure-greys-25 p-6 text-center text-pure-greys-400">
+              No notices available at the moment.
+            </div>
           )}
 
-          {/* Notices List */}
-          <div className="space-y-4">
+          {/* Notices */}
+          <div className="space-y-5">
             {notices.map((notice) => (
               <div
                 key={notice._id}
-                className="bg-white rounded-lg shadow p-5 border"
+                className="bg-white border border-pure-greys-25 shadow-sm hover:shadow-md transition"
               >
-                <h3 className="text-lg font-semibold text-gray-800">
-                  {notice.title}
-                </h3>
+                <div className="p-5">
+                  {/* Title */}
+                  <h3 className="text-lg font-semibold text-richblue-400">
+                    {notice.title}
+                  </h3>
 
-                <p className="text-gray-700 mt-2">
-                  {notice.description}
-                </p>
-
-                <div className="mt-3 flex justify-between text-sm text-gray-500">
-                  <span>
-                    Published by: {notice.publishedBy?.name}
-                  </span>
-
-                  {notice.expiryDate && (
-                    <span>
-                      Expires on:{" "}
-                      {new Date(notice.expiryDate).toLocaleDateString()}
+                  {/* Meta */}
+                  <div className="flex flex-wrap gap-4 text-xs text-pure-greys-400 mt-1">
+                    <span className="flex items-center gap-1">
+                      <FiUser />
+                      {notice.publishedBy?.name || "Hostel Administration"}
                     </span>
-                  )}
+
+                    <span className="flex items-center gap-1">
+                      <FiCalendar />
+                      {new Date(notice.createdAt).toLocaleDateString()}
+                    </span>
+
+                    {notice.expiryDate && (
+                      <span className="text-pink-400">
+                        Expires on{" "}
+                        {new Date(notice.expiryDate).toLocaleDateString()}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Description */}
+                  <p className="text-sm text-pure-greys-600 mt-3 leading-relaxed">
+                    {notice.description}
+                  </p>
                 </div>
               </div>
             ))}
           </div>
+
         </div>
       </div>
     </>

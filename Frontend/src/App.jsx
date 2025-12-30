@@ -16,7 +16,7 @@ import SupervisorComplaint from "./pages/supervisorComplaint";
 import RegisterStudent from "./pages/registerStudent";
 import SupervisorStudents from "./pages/allStudents";
 import PublishNotice from "./pages/PublishNotice";
-import NoticeBoard from "./pages/NoticeBoard"
+import NoticeBoard from "./pages/NoticeBoard";
 
 function App() {
   return (
@@ -87,16 +87,25 @@ function App() {
             </ProtectedRoute>
           }
         />
-        
         <Route
-  path="/checknotice"
-  element={
-    <ProtectedRoute roles={["Student", "Supervisor"]}>
-      <NoticeBoard />
-    </ProtectedRoute>
-  }
-/>
+          path="/publishNotice"
+          element={
+            <ProtectedRoute roles={["Supervisor"]}>
+              <SupervisorContextProvider>
+                <PublishNotice />
+              </SupervisorContextProvider>
+            </ProtectedRoute>
+          }
+        />
 
+        <Route
+          path="/checknotice"
+          element={
+            <ProtectedRoute roles={["Student", "Supervisor"]}>
+              <NoticeBoard />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </AuthContextProvider>
   );

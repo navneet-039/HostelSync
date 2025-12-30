@@ -19,7 +19,7 @@ const Navbar = () => {
     { to: "/", label: "HOME" },
     { to: "/register-complaints", label: "REGISTER COMPLAINTS" },
     { to: "/all-complaints", label: "ALL COMPLAINTS" },
-    { to: "/checknotice", label: "SEE NOTICES" },  // Added link
+    { to: "/checknotice", label: "NOTICES" },  // Added link
     { to: "/contact", label: "CONTACT" },
   ];
 
@@ -29,7 +29,7 @@ const Navbar = () => {
     { to: "/register-student", label: "REGISTER STUDENT" },
     { to: "/supervisor/students", label: "ALL STUDENTS" },
     { to: "/publishNotice", label: "PUBLISH NOTICE" },
-    { to: "/checknotice", label: "SEE NOTICES" },  // Added link
+    { to: "/checknotice", label: "NOTICES" },  // Added link
   ];
 
   const links = user?.role === "Supervisor" ? supervisorLinks : studentLinks;
