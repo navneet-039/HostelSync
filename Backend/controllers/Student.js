@@ -124,32 +124,32 @@ export const getAllStudent = async (req, res) => {
 export const getNotice = async (req, res) => {
   try {
 
-    const student = await User.findById(req.user.id);
-    if (!student) {
+    const user = await User.findById(req.user.id);
+    if (!user) {
       return res.status(404).json({
         success: false,
-        message: "Student not found",
+        message: "user not found",
       });
     }
 
     
-    if (!student.hostel) {
+    if (!user.hostel) {
       return res.status(400).json({
         success: false,
-        message: "Student is not assigned to any hostel",
+        message: "user hostel not there",
       });
     }
 
     
     const notices = await HostelNotice.find({
-      hostel: student.hostel,
+      hostel: user.hostel,
       $or: [
         { expiryDate: { $gte: new Date() } }, 
         { expiryDate: null }                 
       ]
     })
       .sort({ createdAt: -1 }) 
-      .populate("title","description","publishedBy", "name role");
+      .populate("title","description","publishedBy");
 
     return res.status(200).json({
       success: true,

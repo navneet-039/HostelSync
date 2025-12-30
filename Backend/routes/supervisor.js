@@ -9,5 +9,5 @@ router.get("/student/complaints", auth, isStudent, getAllStudentComplaints);
 router.get("/hostel/complaints", auth, isSupervisor, getSupervisorComplaints);
 router.get("/Allstudent",auth,isSupervisor,getAllStudent);
 router.post("/setnotice",auth,isSupervisor,publishNotice)
-router.get("/seeNotice",auth,isStudent,getNotice);
+router.get("/seeNotice",auth,getNotice);
 export default router;
