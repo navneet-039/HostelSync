@@ -27,6 +27,7 @@ const Navbar = () => {
     { to: "/supervisor", label: "STUDENT COMPLAINTS" },
     { to: "/register-student", label: "REGISTER STUDENT" },
     { to: "/supervisor/students", label: "ALL STUDENTS" },
+    { to: "/publishNotice", label: "PUBLISH NOTICE" },
   ];
 
   const links =
