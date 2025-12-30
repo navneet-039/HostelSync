@@ -129,6 +129,7 @@ export const publishNotice = async (req, res) => {
 
     for (const student of hostel.students) {
       try {
+        console.log("hello before sending mail...");
         const html = hostelNoticeEmailTemplate({
           title,
           description,
@@ -137,6 +138,7 @@ export const publishNotice = async (req, res) => {
           createdAt: notice.createdAt,
           expiryDate: notice.expiryDate,
         });
+        console.log("hello after sending mail...");
 
         await sendMail(
           student.email,

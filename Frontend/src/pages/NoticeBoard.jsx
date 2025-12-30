@@ -27,10 +27,9 @@ export default function NoticeBoard() {
     <>
       <Navbar />
 
-      {/* Page Background */}
       <div className="min-h-screen bg-gradient-to-br from-richblue-5 to-pure-greys-5 pt-28 px-4 pb-10">
         <div className="max-w-4xl mx-auto">
-          
+
           {/* Header */}
           <div className="mb-8">
             <h2 className="text-3xl font-semibold text-richblue-400">
@@ -43,9 +42,7 @@ export default function NoticeBoard() {
 
           {/* Loading */}
           {loading && (
-            <div className="text-pure-greys-400">
-              Loading notices...
-            </div>
+            <div className="text-pure-greys-400">Loading notices...</div>
           )}
 
           {/* Error */}
@@ -57,26 +54,27 @@ export default function NoticeBoard() {
 
           {/* Empty */}
           {!loading && notices.length === 0 && (
-            <div className="bg-white border border-pure-greys-25 p-6 text-center text-pure-greys-400">
+            <div className="bg-white border border-pure-greys-25 p-6 text-center text-pure-greys-400 rounded-md">
               No notices available at the moment.
             </div>
           )}
 
           {/* Notices */}
-          <div className="space-y-5">
+          <div className="space-y-6">
             {notices.map((notice) => (
               <div
                 key={notice._id}
-                className="bg-white border border-pure-greys-25 shadow-sm hover:shadow-md transition"
+                className="bg-white border border-pure-greys-25 rounded-md shadow-sm hover:shadow-md transition"
               >
-                <div className="p-5">
+                <div className="p-6">
+
                   {/* Title */}
-                  <h3 className="text-lg font-semibold text-richblue-400">
+                  <h3 className="text-lg font-semibold text-richblue-400 break-words">
                     {notice.title}
                   </h3>
 
                   {/* Meta */}
-                  <div className="flex flex-wrap gap-4 text-xs text-pure-greys-400 mt-1">
+                  <div className="flex flex-wrap gap-4 text-xs text-pure-greys-400 mt-2">
                     <span className="flex items-center gap-1">
                       <FiUser />
                       {notice.publishedBy?.name || "Hostel Administration"}
@@ -88,7 +86,7 @@ export default function NoticeBoard() {
                     </span>
 
                     {notice.expiryDate && (
-                      <span className="text-pink-400">
+                      <span className="text-pink-400 font-medium">
                         Expires on{" "}
                         {new Date(notice.expiryDate).toLocaleDateString()}
                       </span>
@@ -96,9 +94,18 @@ export default function NoticeBoard() {
                   </div>
 
                   {/* Description */}
-                  <p className="text-sm text-pure-greys-600 mt-3 leading-relaxed">
+                  <p className="
+                    mt-4
+                    text-sm
+                    text-pure-greys-600
+                    leading-relaxed
+                    break-all
+                    whitespace-pre-wrap
+                    overflow-hidden
+                  ">
                     {notice.description}
                   </p>
+
                 </div>
               </div>
             ))}
