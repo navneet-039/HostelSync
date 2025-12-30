@@ -15,7 +15,7 @@ import SupervisorContextProvider from "./context/SupervisorContext";
 import SupervisorComplaint from "./pages/supervisorComplaint";
 import RegisterStudent from "./pages/registerStudent";
 import SupervisorStudents from "./pages/allStudents";
-import PublishNotice from "./pages/publishNotice";
+import PublishNotice from "./pages/PublishNotice";
 import NoticeBoard from "./pages/NoticeBoard"
 
 function App() {
@@ -89,7 +89,7 @@ function App() {
         />
         
         <Route
-  path="/see-notice"
+  path="/checknotice"
   element={
     <ProtectedRoute roles={["Student", "Supervisor"]}>
       <NoticeBoard />
