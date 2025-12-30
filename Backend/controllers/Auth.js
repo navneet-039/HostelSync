@@ -59,6 +59,8 @@ export const loginController = async (req, res) => {
   }
 };
 
+
+
 export const registerStudent = async (req, res) => {
   try {
     console.log("Register Student API");
@@ -72,10 +74,10 @@ export const registerStudent = async (req, res) => {
       branch,
       year,
       roomNumber,
-      floor, // NEW FIELD
+      floor,
     } = req.body;
 
-    // Validate all fields
+    // Validate fields
     if (
       !name ||
       !email ||
@@ -92,7 +94,7 @@ export const registerStudent = async (req, res) => {
       });
     }
 
-    // Check for existing user
+    // Check existing user
     const existingUser = await User.findOne({
       $or: [{ email }, { registrationNumber }],
     });
@@ -104,7 +106,7 @@ export const registerStudent = async (req, res) => {
       });
     }
 
-    // Check supervisor
+    // Supervisor validation
     const supervisor = await User.findById(req.user.id).populate(
       "supervisorOfHostel"
     );
@@ -136,11 +138,18 @@ export const registerStudent = async (req, res) => {
       branch,
       year,
       roomNumber,
-      floor, // STORE FLOOR
+      floor,
       hostel: supervisor.supervisorOfHostel._id,
       role: "Student",
     });
 
+    // ✅ PUSH STUDENT INTO HOSTEL
+    await Hostel.findByIdAndUpdate(
+      supervisor.supervisorOfHostel._id,
+      { $push: { students: student._id } }
+    );
+
+    // Send email
     const resetLink = `http://localhost:5173/reset-password?email=${email}`;
 
     const html = registerStudentTemplate(
@@ -150,7 +159,7 @@ export const registerStudent = async (req, res) => {
       supervisor.supervisorOfHostel.name,
       roomNumber,
       resetLink,
-      floor // optionally pass floor to template
+      floor
     );
 
     await sendMail(email, "Student Registration Successful", html);
@@ -167,7 +176,7 @@ export const registerStudent = async (req, res) => {
         branch: student.branch,
         year: student.year,
         roomNumber: student.roomNumber,
-        floor: student.floor, // RETURN FLOOR
+        floor: student.floor,
         hostel: supervisor.supervisorOfHostel.name,
       },
     });
@@ -179,6 +188,7 @@ export const registerStudent = async (req, res) => {
     });
   }
 };
+
 
 export const changePassword = async (req, res) => {
   try {

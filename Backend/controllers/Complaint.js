@@ -111,6 +111,7 @@ export const publishNotice = async (req, res) => {
 
     const hostel = await Hostel.findOne({ supervisor: req.user.id })
       .populate("students", "email name");
+      console.log(hostel.students);
 
     if (!hostel) {
       return res.status(404).json({
