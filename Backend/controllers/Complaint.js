@@ -1,7 +1,9 @@
-
 import User from "../models/User.js";
 import Complaint from "../models/Complaint.js";
-
+import Hostel from "../models/Hostel.js";
+import HostelNotice from "../models/Notice.js";
+import sendMail from "../utils/mailSender.js";
+import {hostelNoticeEmailTemplate} from "../mailTemplates/noticeMail.js"
 
 export const registerComplaint = async (req, res) => {
   try {
@@ -29,7 +31,6 @@ export const registerComplaint = async (req, res) => {
       message: "Complaint registered successfully",
       complaint,
     });
-
   } catch (error) {
     console.error(error);
     return res.status(500).json({
@@ -38,7 +39,6 @@ export const registerComplaint = async (req, res) => {
     });
   }
 };
-
 
 export const updateComplaintStatus = async (req, res) => {
   try {
@@ -71,8 +71,7 @@ export const updateComplaintStatus = async (req, res) => {
     }
 
     if (
-      complaint.hostel.toString() !==
-      supervisor.supervisorOfHostel.toString()
+      complaint.hostel.toString() !== supervisor.supervisorOfHostel.toString()
     ) {
       return res.status(403).json({
         success: false,
@@ -92,6 +91,70 @@ export const updateComplaintStatus = async (req, res) => {
     });
   } catch (error) {
     console.error("updateComplaintStatus error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
+
+export const publishNotice = async (req, res) => {
+  try {
+    const { title, description, expiryDate } = req.body;
+    const supervisor = await User.findById(req.user.id);
+    if (!supervisor) {
+      return res.status(404).json({
+        success: false,
+        message: "Supervisor not found",
+      });
+    }
+
+    const hostel = await Hostel.findOne({ supervisor: req.user.id })
+      .populate("students", "email name");
+
+    if (!hostel) {
+      return res.status(404).json({
+        success: false,
+        message: "No hostel assigned to this supervisor",
+      });
+    }
+
+    const notice = await HostelNotice.create({
+      title,
+      description,
+      hostel: hostel._id,
+      publishedBy: req.user.id,
+      expiryDate,
+    });
+
+    for (const student of hostel.students) {
+      try {
+        const html = hostelNoticeEmailTemplate({
+          title,
+          description,
+          hostelName: hostel.name,
+          publishedByName: supervisor.name,
+          createdAt: notice.createdAt,
+          expiryDate: notice.expiryDate,
+        });
+
+        await sendMail(
+          student.email,
+          `Notice: ${title}`,
+          html
+        );
+      } catch (mailError) {
+        console.error(`Mail failed for ${student.email}`, mailError);
+      }
+    }
+    return res.status(201).json({
+      success: true,
+      message: "Notice published successfully",
+      notice,
+    });
+
+  } catch (error) {
+    console.error("Notice creation error:", error);
     return res.status(500).json({
       success: false,
       message: "Server error",
