@@ -16,6 +16,7 @@ import SupervisorComplaint from "./pages/supervisorComplaint";
 import RegisterStudent from "./pages/registerStudent";
 import SupervisorStudents from "./pages/allStudents";
 import Home from "./pages/homePage";
+import PublishNotice from "./pages/publishNotice";
 
 function App() {
   return (
@@ -82,6 +83,16 @@ function App() {
             <ProtectedRoute roles={["Supervisor"]}>
               <SupervisorContextProvider>
                 <SupervisorStudents />
+              </SupervisorContextProvider>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/publishNotice"
+          element={
+            <ProtectedRoute roles={["Supervisor"]}>
+              <SupervisorContextProvider>
+                <PublishNotice />
               </SupervisorContextProvider>
             </ProtectedRoute>
           }
