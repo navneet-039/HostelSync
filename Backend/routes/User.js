@@ -1,7 +1,8 @@
 import express from "express";
 import { auth,isStudent,isSupervisor } from "../middlewares/Auth.js";
-import { loginController, registerStudent, changePassword,refreshAccessToken ,createSupervisor,createHostel,logoutUser} from "../controllers/Auth.js";
+import { loginController, changePassword,refreshAccessToken ,createSupervisor,createHostel,logoutUser} from "../controllers/Auth.js";
 
+import { registerStudent } from "../controllers/Supervisor.js";
 const router = express.Router();
 
 router.post("/login", loginController);

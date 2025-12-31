@@ -1,7 +1,7 @@
 import express from "express";
 import { auth,isSupervisor,isStudent } from "../middlewares/Auth.js";
 import { registerComplaint, updateComplaintStatus } from "../controllers/Complaint.js";
-import { getAllStudent } from "../controllers/Student.js";
+import { getAllStudent } from "../controllers/Supervisor.js";
 
 const router = express.Router();
 

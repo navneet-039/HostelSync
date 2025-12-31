@@ -1,13 +1,19 @@
 import express from "express";
-import { getAllStudent, getAllStudentComplaints, getNotice, getSupervisorComplaints } from "../controllers/Student.js";
+import {
+  
+  getAllStudentComplaints,
+  
+} from "../controllers/Student.js";
+import { getNotice, publishNotice } from "../controllers/Notice.js";
 import { auth, isStudent, isSupervisor } from "../middlewares/Auth.js";
-import { publishNotice } from "../controllers/Complaint.js";
+import {getSupervisorComplaints} from "../controllers/Supervisor.js"
+import {getAllStudent} from "../controllers/Supervisor.js"
 
 const router = express.Router();
 
 router.get("/student/complaints", auth, isStudent, getAllStudentComplaints);
 router.get("/hostel/complaints", auth, isSupervisor, getSupervisorComplaints);
-router.get("/Allstudent",auth,isSupervisor,getAllStudent);
-router.post("/setnotice",auth,isSupervisor,publishNotice)
-router.get("/seeNotice",auth,getNotice);
+router.get("/Allstudent", auth, isSupervisor, getAllStudent);
+router.post("/setnotice", auth, isSupervisor, publishNotice);
+router.get("/seeNotice", auth, getNotice);
 export default router;

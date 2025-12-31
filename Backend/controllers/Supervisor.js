@@ -1,0 +1,230 @@
+import User from "../models/User.js";
+import Complaint from "../models/Complaint.js";
+import bcrypt from "bcryptjs";
+import sendMail from "../utils/mailSender.js";
+import Hostel from "../models/Hostel.js";
+import jwt from "jsonwebtoken";
+import { registerStudentTemplate } from "../mailTemplates/registrantionMail.js";
+import {
+  generateAccessToken,
+  generateRefreshToken,
+} from "../utils/tokenGenerator.js";
+export const registerStudent = async (req, res) => {
+  try {
+    console.log("Register Student API");
+
+    const {
+      name,
+      email,
+      phone,
+      registrationNumber,
+      password,
+      branch,
+      year,
+      roomNumber,
+      floor,
+    } = req.body;
+
+    // Validate fields
+    if (
+      !name ||
+      !email ||
+      !phone ||
+      !registrationNumber ||
+      !password ||
+      !branch ||
+      !year ||
+      !roomNumber
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required",
+      });
+    }
+
+    // Check existing user
+    const existingUser = await User.findOne({
+      $or: [{ email }, { registrationNumber }],
+    });
+
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: "Student already registered",
+      });
+    }
+
+    // Supervisor validation
+    const supervisor = await User.findById(req.user.id).populate(
+      "supervisorOfHostel"
+    );
+
+    if (!supervisor || supervisor.role !== "Supervisor") {
+      return res.status(403).json({
+        success: false,
+        message: "Only supervisors can register students",
+      });
+    }
+
+    if (!supervisor.supervisorOfHostel) {
+      return res.status(400).json({
+        success: false,
+        message: "Supervisor hostel not assigned",
+      });
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create student
+    const student = await User.create({
+      name,
+      email,
+      phone,
+      registrationNumber,
+      password: hashedPassword,
+      branch,
+      year,
+      roomNumber,
+      floor,
+      hostel: supervisor.supervisorOfHostel._id,
+      role: "Student",
+    });
+
+
+    await Hostel.findByIdAndUpdate(
+      supervisor.supervisorOfHostel._id,
+      { $push: { students: student._id } }
+    );
+
+    // Send email
+    const resetLink = `http://localhost:5173/reset-password?email=${email}`;
+
+    const html = registerStudentTemplate(
+      email,
+      password,
+      registrationNumber,
+      supervisor.supervisorOfHostel.name,
+      roomNumber,
+      resetLink,
+      floor
+    );
+
+    await sendMail(email, "Student Registration Successful", html);
+
+    return res.status(201).json({
+      success: true,
+      message: "Student registered successfully",
+      student: {
+        id: student._id,
+        name: student.name,
+        email: student.email,
+        phone: student.phone,
+        registrationNumber: student.registrationNumber,
+        branch: student.branch,
+        year: student.year,
+        roomNumber: student.roomNumber,
+        floor: student.floor,
+        hostel: supervisor.supervisorOfHostel.name,
+      },
+    });
+  } catch (error) {
+    console.error("Register Student Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+export const getSupervisorComplaints = async (req, res) => {
+  try {
+
+    const supervisor = await User.findById(req.user.id);
+
+    if (!supervisor || supervisor.role !== "Supervisor") {
+      return res.status(403).json({
+        success: false,
+        message: "Access denied",
+      });
+    }
+
+    if (!supervisor.supervisorOfHostel) {
+      return res.status(400).json({
+        success: false,
+        message: "Supervisor hostel not assigned",
+      });
+    }
+
+    const complaints = await Complaint.find({
+      hostel: supervisor.supervisorOfHostel,
+      status: { $in: ["Pending", "In_progress"] },
+    })
+      .populate(
+        "student",
+        "name registrationNumber roomNumber floor"
+      )
+      .sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      success: true,
+      complaints,
+    });
+
+  } catch (error) {
+    console.error(" getSupervisorComplaints error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
+
+
+export const getAllStudent = async (req, res) => {
+  try {
+    const supervisor = await User.findById(req.user.id);
+
+    if (!supervisor || supervisor.role !== "Supervisor") {
+      return res.status(403).json({
+        success: false,
+        message: "Access denied",
+      });
+    }
+
+    const hostelId = supervisor.supervisorOfHostel;
+
+    if (!hostelId) {
+      return res.status(400).json({
+        success: false,
+        message: "Supervisor not assigned to any hostel",
+      });
+    }
+
+    // Fetch students and populate the hostel name
+    const students = await User.find({
+      role: "Student",
+      hostel: hostelId,
+    })
+      .select(
+        "name email phone registrationNumber roomNumber floor branch year hostel"
+      )
+      .populate({
+        path: "hostel",
+        select: "name", // only get the hostel name
+      });
+
+    return res.status(200).json({
+      success: true,
+      count: students.length,
+      students,
+    });
+
+  } catch (error) {
+    console.error("getAllStudent error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
