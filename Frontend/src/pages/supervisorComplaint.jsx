@@ -86,7 +86,7 @@ export default function SupervisorComplaint() {
               <TableHead>
                 <TableRow sx={{ backgroundColor: "#ECF5FF" }}>
                   <TableCell sx={headCell}>Room</TableCell>
-                  <TableCell sx={headCell}>Student</TableCell>
+                  <TableCell sx={headCell}>Student RegistrationNumber</TableCell>
                   <TableCell sx={headCell}>Description</TableCell>
                   <TableCell sx={headCell}>Status</TableCell>
                 </TableRow>

@@ -86,7 +86,7 @@ export default function Home() {
           <div>
             <h4 className="font-semibold mb-3 text-white">Contact</h4>
             <ul className="space-y-2 text-sm text-richblack-200">
-              <li>Email: support@hostelsync.com</li>
+              <li>Email: hostelsupport@college.edu</li>
               <li>Phone: +1111 2222 3333 4444</li>
               <li>Location: India</li>
             </ul>

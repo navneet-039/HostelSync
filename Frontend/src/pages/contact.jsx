@@ -98,7 +98,8 @@ export default function Contact() {
 
           {/* Footer */}
           <p className="text-center text-sm text-slate-500 mt-10">
-             {new Date().getFullYear()} ABC Engineering College – Hostel Management System
+             {new Date().getFullYear()} National Institute of Technology  
+                    Adityapur– Hostel Management System
           </p>
         </div>
       </div>
