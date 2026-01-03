@@ -5,6 +5,10 @@ import sendMail from "../utils/mailSender.js";
 import Hostel from "../models/Hostel.js";
 import jwt from "jsonwebtoken";
 import { registerStudentTemplate } from "../mailTemplates/registrantionMail.js";
+import Complaint from "../models/Complaint.js";
+import { GetObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { s3 } from "../utils/s3.js";
 import {
   generateAccessToken,
   generateRefreshToken,
@@ -223,6 +227,59 @@ export const getAllStudent = async (req, res) => {
   } catch (error) {
     console.error("getAllStudent error:", error);
     res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
+// controllers/complaintController.js
+
+
+export const getComplaintById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const complaint = await Complaint.findById(id)
+      .populate("student", "name email")
+      .populate("hostel", "name")
+      .populate("assignedBy", "name email");
+
+    if (!complaint) {
+      return res.status(404).json({
+        success: false,
+        message: "Complaint not found",
+      });
+    }
+
+    // 🔐 Generate fresh presigned URLs
+    const imagesWithSignedUrls = await Promise.all(
+      complaint.images.map(async (img) => {
+        const command = new GetObjectCommand({
+          Bucket: process.env.AWS_BUCKET_NAME,
+          Key: img.key,
+        });
+
+        const signedUrl = await getSignedUrl(s3, command, {
+          expiresIn: 60 * 60, // 1 hour
+        });
+
+        return {
+          key: img.key,
+          url: signedUrl,
+        };
+      })
+    );
+
+    return res.status(200).json({
+      success: true,
+      complaint: {
+        ...complaint.toObject(),
+        images: imagesWithSignedUrls,
+      },
+    });
+  } catch (error) {
+    console.error("getComplaintById error:", error);
+    return res.status(500).json({
       success: false,
       message: "Server error",
     });

@@ -90,11 +90,15 @@ function App() {
           }
         />
         <Route
-  path="/Supervisor/complaints/:complaintId"
-  element={<SupervisorComplaintDetail />}
-
-/>
-
+          path="/supervisor/complaints/:complaintId"
+          element={
+            <ProtectedRoute roles={["Supervisor"]}>
+              <SupervisorContextProvider>
+                <SupervisorComplaintDetail />
+              </SupervisorContextProvider>
+            </ProtectedRoute>
+          }
+        />
 
         <Route
           path="/publishNotice"
