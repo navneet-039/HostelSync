@@ -57,10 +57,8 @@ export default function SupervisorStudents() {
       const term = searchTerm.toLowerCase();
       return (
         student.name.toLowerCase().includes(term) ||
-        student.email.toLowerCase().includes(term) ||
         student.registrationNumber.toLowerCase().includes(term) ||
-        student.branch.toLowerCase().includes(term) ||
-        student.roomNumber.toLowerCase().includes(term) // Room searchable
+        student.roomNumber.toLowerCase().includes(term)
       );
     });
     setFilteredStudents(filtered);
@@ -100,8 +98,8 @@ export default function SupervisorStudents() {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               size="small"
-              placeholder="Type name, email, reg no, branch, or room no..."
-              helperText="Searchable by Name, Email, Registration Number, Branch, or Room Number"
+              placeholder="Type name, reg no, or room no..."
+              helperText="Searchable by Name, Registration Number, or Room Number"
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
