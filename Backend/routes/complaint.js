@@ -15,7 +15,7 @@ router.post(
   registerComplaint
 );
 
-router.post("/register", auth,isStudent, registerComplaint);
+
 router.patch("/status/:complaintId", auth,isSupervisor, updateComplaintStatus,getAllStudent);
 
 
