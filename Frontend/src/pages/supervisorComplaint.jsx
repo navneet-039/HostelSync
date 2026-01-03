@@ -11,6 +11,7 @@ import Paper from "@mui/material/Paper";
 import CircularProgress from "@mui/material/CircularProgress";
 import api from "../api/axios";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const STATUSES = ["Pending", "In_progress", "Resolved"];
 
@@ -20,6 +21,8 @@ export default function SupervisorComplaint() {
     dataLoading,
     fetchSupervisorComplaints,
   } = useContext(SupervisorContext);
+  const navigate = useNavigate();
+
 
   const [activeRow, setActiveRow] = useState(null);
   const [updatingId, setUpdatingId] = useState(null);
@@ -168,6 +171,14 @@ export default function SupervisorComplaint() {
                         </div>
                       )}
                     </TableCell>
+                    <button
+  className="text-blue-600 underline text-sm"
+  onClick={() => navigate(`/supervisor/complaints/${c._id}`)}
+>
+  View
+</button>
+
+
                   </TableRow>
                 ))}
               </TableBody>

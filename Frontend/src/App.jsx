@@ -17,6 +17,8 @@ import RegisterStudent from "./pages/registerStudent";
 import SupervisorStudents from "./pages/allStudents";
 import PublishNotice from "./pages/PublishNotice";
 import NoticeBoard from "./pages/NoticeBoard";
+import SupervisorComplaintDetail from "./pages/supervisorComplaintdetail";
+
 
 function App() {
   return (
@@ -87,6 +89,13 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+  path="/Supervisor/complaints/:complaintId"
+  element={<SupervisorComplaintDetail />}
+
+/>
+
+
         <Route
           path="/publishNotice"
           element={
