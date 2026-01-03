@@ -19,7 +19,6 @@ import PublishNotice from "./pages/PublishNotice";
 import NoticeBoard from "./pages/NoticeBoard";
 import SupervisorComplaintDetail from "./pages/supervisorComplaintdetail";
 
-
 function App() {
   return (
     <AuthContextProvider>
