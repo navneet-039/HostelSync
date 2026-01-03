@@ -60,7 +60,7 @@ export default function SupervisorStudents() {
         student.email.toLowerCase().includes(term) ||
         student.registrationNumber.toLowerCase().includes(term) ||
         student.branch.toLowerCase().includes(term) ||
-        student.hostel?.name?.toLowerCase().includes(term)
+        student.roomNumber.toLowerCase().includes(term) // Room searchable
       );
     });
     setFilteredStudents(filtered);
@@ -85,7 +85,7 @@ export default function SupervisorStudents() {
     <div className="min-h-screen bg-richblack-5">
       <Navbar />
 
-      {/* Centered card layout - wider */}
+      {/* Centered card layout */}
       <div className="max-w-7xl mx-auto px-4 py-10">
         <Paper className="p-6 rounded-2xl shadow-lg bg-white">
           <h2 className="text-2xl font-bold mb-4 text-richblack-900">
@@ -100,8 +100,8 @@ export default function SupervisorStudents() {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               size="small"
-              placeholder="Type name, email, reg no, branch, or hostel..."
-              helperText="Searchable by Name, Email, Registration Number, Branch, or Hostel"
+              placeholder="Type name, email, reg no, branch, or room no..."
+              helperText="Searchable by Name, Email, Registration Number, Branch, or Room Number"
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -109,7 +109,7 @@ export default function SupervisorStudents() {
                   </InputAdornment>
                 ),
               }}
-              sx={{ width: "350px" }} // Slightly wider search box
+              sx={{ width: "350px" }}
             />
           </div>
 
@@ -122,7 +122,7 @@ export default function SupervisorStudents() {
               component={Paper}
               className="rounded-2xl shadow overflow-x-auto"
             >
-              <Table sx={{ minWidth: 1000 }}> {/* Wider table */}
+              <Table sx={{ minWidth: 1000 }}>
                 <TableHead>
                   <TableRow sx={{ backgroundColor: "#ECF5FF" }}>
                     <TableCell sx={headCell}>Name</TableCell>
@@ -133,7 +133,6 @@ export default function SupervisorStudents() {
                     <TableCell sx={headCell}>Floor</TableCell>
                     <TableCell sx={headCell}>Branch</TableCell>
                     <TableCell sx={headCell}>Year</TableCell>
-                    <TableCell sx={headCell}>Hostel</TableCell>
                   </TableRow>
                 </TableHead>
 
@@ -154,9 +153,6 @@ export default function SupervisorStudents() {
                       <TableCell sx={bodyCell}>{student.floor || "-"}</TableCell>
                       <TableCell sx={bodyCell}>{student.branch}</TableCell>
                       <TableCell sx={bodyCell}>{student.year}</TableCell>
-                      <TableCell sx={bodyCell}>
-                        {student.hostel?.name || "-"}
-                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
