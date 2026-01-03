@@ -1,9 +1,5 @@
 import User from "../models/User.js";
 import Complaint from "../models/Complaint.js";
-import Hostel from "../models/Hostel.js";
-import HostelNotice from "../models/Notice.js";
-import sendMail from "../utils/mailSender.js";
-import { hostelNoticeEmailTemplate } from "../mailTemplates/noticeMail.js";
 import s3 from "../Config/S3.js";
 
 export const registerComplaint = async (req, res) => {
@@ -17,20 +13,28 @@ export const registerComplaint = async (req, res) => {
         message: "Student not found",
       });
     }
-    const imageUrls = [];
-    if (req.files) {
+
+    const images = [];
+
+
+    if (req.files && req.files.length > 0) {
       for (const file of req.files) {
-        const uploadResult = await s3
-          .upload({
-            Bucket: process.env.AWS_BUCKET_NAME,
-            Key: `complaints/active/${student._id}/${Date.now()}-${
-              file.originalname
-            }`,
-            Body: file.buffer,
-            ContentType: file.mimetype,
-          })
-          .promise();
-        imageUrls.push(uploadResult.Location);
+        const key = `complaints/active/${student._id}/${Date.now()}-${file.originalname}`;
+
+        const command = new PutObjectCommand({
+          Bucket: process.env.AWS_BUCKET_NAME,
+          Key: key,
+          Body: file.buffer,
+          ContentType: file.mimetype,
+        });
+
+        await s3.send(command);
+
+
+        images.push({
+          url: `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`,
+          key,
+        });
       }
     }
 
@@ -38,7 +42,7 @@ export const registerComplaint = async (req, res) => {
       title,
       description,
       category,
-      images: imageUrls,
+      images,
       student: student._id,
       hostel: student.hostel,
     });
@@ -49,7 +53,7 @@ export const registerComplaint = async (req, res) => {
       complaint,
     });
   } catch (error) {
-    console.error(error);
+    console.error("registerComplaint error:", error);
     return res.status(500).json({
       success: false,
       message: "Server error while registering complaint",
