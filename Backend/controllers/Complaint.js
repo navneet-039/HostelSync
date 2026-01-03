@@ -70,4 +70,91 @@ export const registerComplaint = async (req, res) => {
   }
 };
 
+export const updateComplaintStatus = async (req, res) => {
+  try {
+    const { complaintId } = req.params;
+    const { status } = req.body;
+
+    if (!["Pending", "In_progress", "Resolved"].includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid status value",
+      });
+    }
+
+    const supervisor = await User.findById(req.user.id);
+    if (!supervisor || supervisor.role !== "Supervisor") {
+      return res.status(403).json({
+        success: false,
+        message: "Access denied",
+      });
+    }
+
+    const complaint = await Complaint.findById(complaintId);
+    if (!complaint) {
+      return res.status(404).json({
+        success: false,
+        message: "Complaint not found",
+      });
+    }
+
+    if (
+      complaint.hostel.toString() !== supervisor.supervisorOfHostel.toString()
+    ) {
+      return res.status(403).json({
+        success: false,
+        message: "Not authorized",
+      });
+    }
+
+    // 1️⃣ Archive images when resolved
+    if (status === "Resolved" && !complaint.isArchived) {
+      for (let img of complaint.images) {
+        const oldKey = img.key;
+        const newKey = oldKey.replace(
+          "complaints/active/",
+          "complaints/archive/"
+        );
+
+        await s3.send(
+          new CopyObjectCommand({
+            Bucket: process.env.AWS_BUCKET_NAME,
+            CopySource: `${process.env.AWS_BUCKET_NAME}/${oldKey}`,
+            Key: newKey,
+          })
+        );
+
+        await s3.send(
+          new DeleteObjectCommand({
+            Bucket: process.env.AWS_BUCKET_NAME,
+            Key: oldKey,
+          })
+        );
+
+        img.key = newKey;
+        img.url = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${newKey}`;
+      }
+
+      complaint.isArchived = true;
+    }
+
+    // 2️⃣ Update complaint fields
+    complaint.status = status;
+    complaint.assignedBy = supervisor._id;
+
+    await complaint.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Complaint status updated",
+      complaint,
+    });
+  } catch (error) {
+    console.error("updateComplaintStatus error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
 

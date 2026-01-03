@@ -17,8 +17,19 @@ const ComplaintSchema = new mongoose.Schema(
       enum: ["Electricity", "Water", "Furniture", "Cleaning", "Other"],
       required: true,
     },
-    images: [String],
-    
+     images: [
+      {
+        url: {
+          type: String,
+          required: true,
+        },
+        key: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
+
     isArchived: {
       type: Boolean,
       default: false,
