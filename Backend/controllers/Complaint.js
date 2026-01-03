@@ -3,11 +3,11 @@ import Complaint from "../models/Complaint.js";
 import Hostel from "../models/Hostel.js";
 import HostelNotice from "../models/Notice.js";
 import sendMail from "../utils/mailSender.js";
-import {hostelNoticeEmailTemplate} from "../mailTemplates/noticeMail.js"
+import { hostelNoticeEmailTemplate } from "../mailTemplates/noticeMail.js";
+import s3 from "../Config/S3.js";
 
 export const registerComplaint = async (req, res) => {
   try {
-    console.log("hlo from register complaint");
     const { title, description, category } = req.body;
 
     const student = await User.findById(req.user.id);
@@ -17,11 +17,28 @@ export const registerComplaint = async (req, res) => {
         message: "Student not found",
       });
     }
+    const imageUrls = [];
+    if (req.files) {
+      for (const file of req.files) {
+        const uploadResult = await s3
+          .upload({
+            Bucket: process.env.AWS_BUCKET_NAME,
+            Key: `complaints/active/${student._id}/${Date.now()}-${
+              file.originalname
+            }`,
+            Body: file.buffer,
+            ContentType: file.mimetype,
+          })
+          .promise();
+        imageUrls.push(uploadResult.Location);
+      }
+    }
 
     const complaint = await Complaint.create({
       title,
       description,
       category,
+      images: imageUrls,
       student: student._id,
       hostel: student.hostel,
     });
@@ -97,5 +114,3 @@ export const updateComplaintStatus = async (req, res) => {
     });
   }
 };
-
-
