@@ -51,6 +51,7 @@ export const registerComplaint = async (req, res) => {
         });
       }
     }
+  
 
     // 3️ Save image references
     complaint.images = images;
@@ -107,7 +108,7 @@ export const updateComplaintStatus = async (req, res) => {
       });
     }
 
-    // 1️⃣ Archive images when resolved
+    // 1️ Archive images when resolved
     if (status === "Resolved" && !complaint.isArchived) {
       for (let img of complaint.images) {
         const oldKey = img.key;
@@ -138,7 +139,7 @@ export const updateComplaintStatus = async (req, res) => {
       complaint.isArchived = true;
     }
 
-    // 2️⃣ Update complaint fields
+    // 2️ Update complaint fields
     complaint.status = status;
     complaint.assignedBy = supervisor._id;
 
