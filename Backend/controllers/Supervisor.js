@@ -1,5 +1,5 @@
 import User from "../models/User.js";
-import Complaint from "../models/Complaint.js";
+
 import bcrypt from "bcryptjs";
 import sendMail from "../utils/mailSender.js";
 import Hostel from "../models/Hostel.js";
@@ -8,11 +8,8 @@ import { registerStudentTemplate } from "../mailTemplates/registrantionMail.js";
 import Complaint from "../models/Complaint.js";
 import { GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { s3 } from "../utils/s3.js";
-import {
-  generateAccessToken,
-  generateRefreshToken,
-} from "../utils/tokenGenerator.js";
+import s3 from "../Config/S3.js"
+
 export const registerStudent = async (req, res) => {
   try {
     console.log("Register Student API");
@@ -251,7 +248,7 @@ export const getComplaintById = async (req, res) => {
       });
     }
 
-    // 🔐 Generate fresh presigned URLs
+    //  Generate fresh presigned URLs
     const imagesWithSignedUrls = await Promise.all(
       complaint.images.map(async (img) => {
         const command = new GetObjectCommand({
