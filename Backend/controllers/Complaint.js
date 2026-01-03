@@ -42,6 +42,7 @@ export const registerComplaint = async (req, res) => {
             Key: key,
             Body: file.buffer,
             ContentType: file.mimetype,
+            ACL: "bucket-owner-full-control",
           })
         );
 
