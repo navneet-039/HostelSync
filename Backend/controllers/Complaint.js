@@ -4,6 +4,7 @@ import s3 from "../Config/S3.js";
 
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { CopyObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
+import { pushComplaintJob } from "../utils/sqs.js";
 
 export const registerComplaint = async (req, res) => {
   try {
@@ -52,11 +53,14 @@ export const registerComplaint = async (req, res) => {
         });
       }
     }
-  
 
     // 3️ Save image references
     complaint.images = images;
     await complaint.save();
+    await pushComplaintJob({
+      complaintId: complaint._id,
+      supervisorEmail: hostel.supervisor.email,
+    });
 
     return res.status(201).json({
       success: true,
@@ -159,4 +163,3 @@ export const updateComplaintStatus = async (req, res) => {
     });
   }
 };
-
