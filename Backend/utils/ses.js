@@ -1,4 +1,5 @@
 import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
+
 const ses = new SESClient({
   region: process.env.AWS_REGION,
   credentials: {
@@ -10,19 +11,11 @@ const ses = new SESClient({
 export const sendComplaintMail = async ({ to, subject, html }) => {
   await ses.send(
     new SendEmailCommand({
-      source: process.env.SES_FROM_MAIL,
-      Destination: {
-        ToAddresses: [to],
-      },
+      Source: process.env.SES_FROM_EMAIL,
+      Destination: { ToAddresses: [to] },
       Message: {
-        Subject: {
-          Data: subject,
-        },
-        Body: {
-          Html: {
-            Data: html,
-          },
-        },
+        Subject: { Data: subject },
+        Body: { Html: { Data: html } },
       },
     })
   );
