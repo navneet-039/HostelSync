@@ -7,6 +7,7 @@ import { connect } from "./Config/mongodb.js";
 import userRoutes from "./routes/User.js";
 import complaintRoutes from "./routes/complaint.js"
 import supervisorRoutes from "./routes/supervisor.js";
+import { startComplaintEmailWorker } from "./workers/complaintWorkerEmail.js";
 
 dotenv.config();
 
@@ -36,3 +37,4 @@ const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+startComplaintEmailWorker();
