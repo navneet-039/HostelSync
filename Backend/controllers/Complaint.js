@@ -10,7 +10,14 @@ export const registerComplaint = async (req, res) => {
   try {
     const { title, description, category } = req.body;
 
-    const student = await User.findById(req.user.id);
+    const student = await User.findById(req.user.id).populate({
+      path: "hostel",
+      populate: {
+        path: "supervisor",
+        select: "email",
+      },
+    });
+
     if (!student) {
       return res.status(404).json({
         success: false,
@@ -57,9 +64,10 @@ export const registerComplaint = async (req, res) => {
     // 3️ Save image references
     complaint.images = images;
     await complaint.save();
+    console.log(student.hostel.supervisor);
     await pushComplaintJob({
       complaintId: complaint._id,
-      supervisorEmail: hostel.supervisor.email,
+      supervisorEmail: student.hostel.supervisor.email,
     });
 
     return res.status(201).json({

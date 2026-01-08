@@ -9,9 +9,10 @@ const ses = new SESClient({
 });
 
 export const sendComplaintMail = async ({ to, subject, html }) => {
+  console.log()
   await ses.send(
     new SendEmailCommand({
-      Source: process.env.SES_FROM_EMAIL,
+      Source: process.env.SES_FROM_MAIL,
       Destination: { ToAddresses: [to] },
       Message: {
         Subject: { Data: subject },

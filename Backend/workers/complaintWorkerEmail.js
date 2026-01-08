@@ -2,10 +2,11 @@ import {
   ReceiveMessageCommand,
   DeleteMessageCommand,
 } from "@aws-sdk/client-sqs";
+import { complaintTemplate } from "../mailTemplates/complaintTemplate.js";
 
 import Complaint from "../models/Complaint.js";
 import { sendComplaintMail } from "../utils/ses.js";
-import {sqs} from "../utils/sqs.js";
+import { sqs } from "../utils/sqs.js";
 
 export const startComplaintEmailWorker = async () => {
   while (true) {
@@ -35,11 +36,12 @@ export const startComplaintEmailWorker = async () => {
         await sendComplaintMail({
           to: supervisorEmail,
           subject: "New Hostel Complaint",
-          html: `
-            <h2>${complaint.title}</h2>
-            <p>${complaint.description}</p>
-            <p><b>Student:</b> ${complaint.student.name}</p>
-          `,
+          html: complaintTemplate(
+            complaint.title,
+            complaint.description,
+            complaint.student.name,
+            complaint.student.email,
+          ),
         });
 
         await sqs.send(
