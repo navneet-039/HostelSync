@@ -1,6 +1,7 @@
 import User from "../models/User.js";
 import Hostel from "../models/Hostel.js";
 import HostelNotice from "../models/Notice.js";
+import {sendMail} from "../utils/ses.js";
 export const getNotice = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
@@ -107,6 +108,7 @@ export const publishNotice = async (req, res) => {
           expiryDate: notice.expiryDate,
         });
         console.log("hello after sending mail...");
+        console.log("hi mail server");
 
         await sendMail(
           student.email,

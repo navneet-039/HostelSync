@@ -1,7 +1,7 @@
 import User from "../models/User.js";
 
 import bcrypt from "bcryptjs";
-import sendMail from "../utils/mailSender.js";
+
 import Hostel from "../models/Hostel.js";
 import jwt from "jsonwebtoken";
 import { registerStudentTemplate } from "../mailTemplates/registrantionMail.js";
@@ -9,6 +9,7 @@ import Complaint from "../models/Complaint.js";
 import { GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import s3 from "../Config/S3.js"
+import {sendMail} from "../utils/ses.js";
 
 export const registerStudent = async (req, res) => {
   try {

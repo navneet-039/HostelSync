@@ -8,7 +8,7 @@ const ses = new SESClient({
   },
 });
 
-export const sendComplaintMail = async ({ to, subject, html }) => {
+export const sendMail = async ({ to, subject, html }) => {
   console.log()
   await ses.send(
     new SendEmailCommand({

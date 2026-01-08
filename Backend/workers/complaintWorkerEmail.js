@@ -5,7 +5,7 @@ import {
 import { complaintTemplate } from "../mailTemplates/complaintTemplate.js";
 
 import Complaint from "../models/Complaint.js";
-import { sendComplaintMail } from "../utils/ses.js";
+import { sendMail } from "../utils/ses.js";
 import { sqs } from "../utils/sqs.js";
 
 export const startComplaintEmailWorker = async () => {
