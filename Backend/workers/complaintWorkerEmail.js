@@ -5,10 +5,12 @@ import {
 import { complaintTemplate } from "../mailTemplates/complaintTemplate.js";
 
 import Complaint from "../models/Complaint.js";
-import { sendMail } from "../utils/ses.js";
+import sendMail from "../utils/mailSender.js";
 import { sqs } from "../utils/sqs.js";
 
 export const startComplaintEmailWorker = async () => {
+  console.log(" Complaint Email Worker started");
+
   while (true) {
     const res = await sqs.send(
       new ReceiveMessageCommand({
@@ -25,6 +27,7 @@ export const startComplaintEmailWorker = async () => {
     for (const msg of res.Messages) {
       try {
         const { complaintId, supervisorEmail } = JSON.parse(msg.Body);
+
         const complaint = await Complaint.findById(complaintId).populate(
           "student"
         );
@@ -33,16 +36,17 @@ export const startComplaintEmailWorker = async () => {
           console.error(" Complaint not found:", complaintId);
           continue;
         }
-        await sendComplaintMail({
-          to: supervisorEmail,
-          subject: "New Hostel Complaint",
-          html: complaintTemplate(
+
+        await sendMail(
+          supervisorEmail,
+          "New Hostel Complaint",
+          complaintTemplate(
             complaint.title,
             complaint.description,
             complaint.student.name,
-            complaint.student.email,
-          ),
-        });
+            complaint.student.email
+          )
+        );
 
         await sqs.send(
           new DeleteMessageCommand({
@@ -51,7 +55,7 @@ export const startComplaintEmailWorker = async () => {
           })
         );
 
-        console.log(" Email sent & message deleted");
+        console.log("Email sent & message deleted");
       } catch (err) {
         console.error(" Email worker error:", err);
       }

@@ -9,7 +9,7 @@ import Complaint from "../models/Complaint.js";
 import { GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import s3 from "../Config/S3.js"
-import {sendMail} from "../utils/ses.js";
+import sendMail from "../utils/mailSender.js";
 
 export const registerStudent = async (req, res) => {
   try {

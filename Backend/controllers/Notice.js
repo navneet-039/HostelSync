@@ -1,7 +1,8 @@
 import User from "../models/User.js";
 import Hostel from "../models/Hostel.js";
 import HostelNotice from "../models/Notice.js";
-import {sendMail} from "../utils/ses.js";
+import sendMail from "../utils/mailSender.js";
+import { hostelNoticeEmailTemplate } from "../mailTemplates/noticeMail.js";
 export const getNotice = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
@@ -22,8 +23,7 @@ export const getNotice = async (req, res) => {
         });
       }
       hostelId = user.hostel;
-    } 
-    else if (user.role === "Supervisor") {
+    } else if (user.role === "Supervisor") {
       if (!user.supervisorOfHostel) {
         return res.status(400).json({
           success: false,
@@ -31,8 +31,7 @@ export const getNotice = async (req, res) => {
         });
       }
       hostelId = user.supervisorOfHostel;
-    } 
-    else {
+    } else {
       return res.status(403).json({
         success: false,
         message: "Access denied",
@@ -44,7 +43,7 @@ export const getNotice = async (req, res) => {
       isActive: true,
       $or: [
         { expiryDate: { $gte: new Date() } }, // not expired
-        { expiryDate: null },                 // no expiry
+        { expiryDate: null }, // no expiry
       ],
     })
       .sort({ createdAt: -1 })
@@ -56,7 +55,6 @@ export const getNotice = async (req, res) => {
       count: notices.length,
       notices,
     });
-
   } catch (error) {
     console.error("Get Notice Error:", error);
     return res.status(500).json({
@@ -77,9 +75,11 @@ export const publishNotice = async (req, res) => {
       });
     }
 
-    const hostel = await Hostel.findOne({ supervisor: req.user.id })
-      .populate("students", "email name");
-      console.log(hostel.students);
+    const hostel = await Hostel.findOne({ supervisor: req.user.id }).populate(
+      "students",
+      "email name"
+    );
+    console.log(hostel.students);
 
     if (!hostel) {
       return res.status(404).json({
@@ -110,11 +110,7 @@ export const publishNotice = async (req, res) => {
         console.log("hello after sending mail...");
         console.log("hi mail server");
 
-        await sendMail(
-          student.email,
-          `Notice: ${title}`,
-          html
-        );
+        await sendMail(student.email, "New Hostel Notice", html);
       } catch (mailError) {
         console.error(`Mail failed for ${student.email}`, mailError);
       }
@@ -124,7 +120,6 @@ export const publishNotice = async (req, res) => {
       message: "Notice published successfully",
       notice,
     });
-
   } catch (error) {
     console.error("Notice creation error:", error);
     return res.status(500).json({
