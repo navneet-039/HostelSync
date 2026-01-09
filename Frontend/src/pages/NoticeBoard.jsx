@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../api/axios";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/navbar";
 import { FiCalendar, FiUser } from "react-icons/fi";
 
 export default function NoticeBoard() {

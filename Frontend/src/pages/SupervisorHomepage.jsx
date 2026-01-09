@@ -3,7 +3,7 @@ import AuthContext from "../context/authContext";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { FiClipboard, FiUsers, FiUserPlus } from "react-icons/fi";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/navbar";
 
 export default function SupervisorHomePage() {
   const { user, loading } = useContext(AuthContext);

@@ -10,7 +10,7 @@ import {
 } from "react-icons/md";
 
 import api from "../api/axios";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/navbar";
 
 export default function RegisterComplaint() {
   const navigate = useNavigate();

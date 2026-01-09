@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { SupervisorContext } from "../context/SupervisorContext";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/navbar";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";

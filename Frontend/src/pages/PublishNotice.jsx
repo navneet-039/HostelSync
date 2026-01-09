@@ -1,6 +1,6 @@
 import { useState } from "react";
 import api from "../api/axios";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/navbar";
 
 export default function PublishNotice() {
   const [title, setTitle] = useState("");
