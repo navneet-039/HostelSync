@@ -13,6 +13,7 @@ import {
 export const loginController = async (req, res) => {
   try {
     console.log("hii");
+
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });
@@ -37,10 +38,10 @@ export const loginController = async (req, res) => {
     user.refreshToken = refreshToken;
     await user.save();
 
-    res.cookie("refreshToken", token, {
+    res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: true, 
-      sameSite: "none", 
+      secure: true,
+      sameSite: "none",
     });
 
     return res.status(200).json({
@@ -53,10 +54,11 @@ export const loginController = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error(error);
+    console.error("LOGIN ERROR:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
 
 export const changePassword = async (req, res) => {
   try {
