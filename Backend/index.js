@@ -8,6 +8,7 @@ import userRoutes from "./routes/User.js";
 import complaintRoutes from "./routes/complaint.js"
 import supervisorRoutes from "./routes/supervisor.js";
 import { startComplaintEmailWorker } from "./workers/complaintWorkerEmail.js";
+import {startNoticeEmailWorker} from "./workers/noticeEmailWorker.js"
 
 dotenv.config();
 
@@ -38,3 +39,4 @@ app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 startComplaintEmailWorker();
+startNoticeEmailWorker();

@@ -1,7 +1,7 @@
 import User from "../models/User.js";
 import Hostel from "../models/Hostel.js";
 import HostelNotice from "../models/Notice.js";
-import sendMail from "../utils/mailSender.js";
+import { pushComplaintJob } from "../utils/sqs.js"; 
 import { hostelNoticeEmailTemplate } from "../mailTemplates/noticeMail.js";
 export const getNotice = async (req, res) => {
   try {
@@ -64,6 +64,7 @@ export const getNotice = async (req, res) => {
   }
 };
 
+
 export const publishNotice = async (req, res) => {
   try {
     const { title, description, expiryDate } = req.body;
@@ -95,6 +96,7 @@ export const publishNotice = async (req, res) => {
       expiryDate,
     });
 
+    // Queue emails for all students
     for (const student of hostel.students) {
       try {
         const html = hostelNoticeEmailTemplate({
@@ -106,17 +108,19 @@ export const publishNotice = async (req, res) => {
           expiryDate: notice.expiryDate,
         });
 
-        await sendMail(student.email, "New Hostel Notice", html);
-
-        await new Promise((resolve) => setTimeout(resolve, 300));
-      } catch (mailError) {
-        console.error(`Mail failed for ${student.email}`, mailError);
+        await pushComplaintJob({
+          to: student.email,
+          subject: "New Hostel Notice",
+          html,
+        });
+      } catch (err) {
+        console.error(`Failed to queue email for ${student.email}`, err);
       }
     }
 
     return res.status(201).json({
       success: true,
-      message: "Notice published successfully",
+      message: "Notice published successfully. Emails are being sent.",
       notice,
     });
   } catch (error) {
@@ -127,3 +131,4 @@ export const publishNotice = async (req, res) => {
     });
   }
 };
+
