@@ -1,5 +1,3 @@
-
-
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 
@@ -8,10 +6,12 @@ dotenv.config();
 const sendMail = async (to, subject, html) => {
   try {
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      host: "smtp.gmail.com",
+      port: 465,         
+      secure: true,      
       auth: {
         user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
+        pass: process.env.EMAIL_PASS, 
       },
     });
 
@@ -23,10 +23,10 @@ const sendMail = async (to, subject, html) => {
     };
 
     const info = await transporter.sendMail(mailOptions);
-    console.log("Email sent successfully:", info.response);
+    console.log(" Email sent:", info.response);
     return info;
   } catch (error) {
-    console.log("Email sending failed:", error);
+    console.error(" Email sending failed:", error);
     throw new Error("Email not sent");
   }
 };
