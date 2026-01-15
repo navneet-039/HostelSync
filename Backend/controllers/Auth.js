@@ -37,13 +37,10 @@ export const loginController = async (req, res) => {
     user.refreshToken = refreshToken;
     await user.save();
 
-    res.cookie("refreshToken", refreshToken, {
+    res.cookie("refreshToken", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // true in prod, false in dev
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-
-      path: "/",
+      secure: true, 
+      sameSite: "none", 
     });
 
     return res.status(200).json({
