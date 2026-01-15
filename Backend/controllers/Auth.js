@@ -39,9 +39,11 @@ export const loginController = async (req, res) => {
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: false,
-      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production", // true in prod, false in dev
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000,
+
+      path: "/",
     });
 
     return res.status(200).json({
@@ -58,11 +60,6 @@ export const loginController = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
-
-
-
-
-
 
 export const changePassword = async (req, res) => {
   try {
@@ -115,10 +112,7 @@ export const refreshAccessToken = async (req, res) => {
       return res.status(401).json({ message: "Refresh token missing" });
     }
 
-    const decoded = jwt.verify(
-      refreshToken,
-      process.env.REFRESH_TOKEN_SECRET
-    );
+    const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
 
     const user = await User.findById(decoded.id);
     if (!user || user.refreshToken !== refreshToken) {
@@ -139,7 +133,6 @@ export const refreshAccessToken = async (req, res) => {
     return res.status(401).json({ message: "Invalid refresh token" });
   }
 };
-
 
 export const createSupervisor = async (req, res) => {
   try {
