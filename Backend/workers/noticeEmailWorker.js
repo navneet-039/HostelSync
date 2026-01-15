@@ -1,3 +1,4 @@
+
 import { ReceiveMessageCommand, DeleteMessageCommand } from "@aws-sdk/client-sqs";
 import { sqs } from "../utils/sqs.js";
 import sendMail from "../utils/mailSender.js";
@@ -8,7 +9,7 @@ export const startNoticeEmailWorker = async () => {
   while (true) {
     const res = await sqs.send(
       new ReceiveMessageCommand({
-        QueueUrl: process.env.SQS_QUEUE_URL,
+        QueueUrl: process.env.NOTICE_SQS_QUEUE_URL,
         MaxNumberOfMessages: 5,
         WaitTimeSeconds: 20,
       })
@@ -24,7 +25,7 @@ export const startNoticeEmailWorker = async () => {
 
         await sqs.send(
           new DeleteMessageCommand({
-            QueueUrl: process.env.SQS_QUEUE_URL,
+            QueueUrl: process.env.NOTICE_SQS_QUEUE_URL,
             ReceiptHandle: msg.ReceiptHandle,
           })
         );

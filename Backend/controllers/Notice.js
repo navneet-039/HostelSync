@@ -1,8 +1,8 @@
 import User from "../models/User.js";
 import Hostel from "../models/Hostel.js";
 import HostelNotice from "../models/Notice.js";
-import { pushComplaintJob } from "../utils/sqs.js"; 
 import { hostelNoticeEmailTemplate } from "../mailTemplates/noticeMail.js";
+import { pushNoticeEmailJob } from "../utils/sqs.js";
 export const getNotice = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
@@ -65,28 +65,21 @@ export const getNotice = async (req, res) => {
 };
 
 
+
+
 export const publishNotice = async (req, res) => {
   try {
     const { title, description, expiryDate } = req.body;
     const supervisor = await User.findById(req.user.id);
-    if (!supervisor) {
-      return res.status(404).json({
-        success: false,
-        message: "Supervisor not found",
-      });
-    }
+    if (!supervisor)
+      return res.status(404).json({ success: false, message: "Supervisor not found" });
 
     const hostel = await Hostel.findOne({ supervisor: req.user.id }).populate(
       "students",
       "email name"
     );
-
-    if (!hostel) {
-      return res.status(404).json({
-        success: false,
-        message: "No hostel assigned to this supervisor",
-      });
-    }
+    if (!hostel)
+      return res.status(404).json({ success: false, message: "No hostel assigned to this supervisor" });
 
     const notice = await HostelNotice.create({
       title,
@@ -108,7 +101,7 @@ export const publishNotice = async (req, res) => {
           expiryDate: notice.expiryDate,
         });
 
-        await pushComplaintJob({
+        await pushNoticeEmailJob({
           to: student.email,
           subject: "New Hostel Notice",
           html,
@@ -125,10 +118,6 @@ export const publishNotice = async (req, res) => {
     });
   } catch (error) {
     console.error("Notice creation error:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Server error",
-    });
+    return res.status(500).json({ success: false, message: "Server error" });
   }
 };
-
