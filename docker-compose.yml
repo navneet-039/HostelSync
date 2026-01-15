@@ -3,6 +3,7 @@ version: "3.9"
 services:
   backend:
     build: ./Backend
+    container_name: hostelsync-backend
     ports:
       - "8000:8000"
     env_file:
@@ -12,8 +13,11 @@ services:
 
   frontend:
     build: ./Frontend
+    container_name: hostelsync-frontend
     ports:
       - "5173:5173"
+    env_file:
+      - ./Frontend/.env
     depends_on:
       - backend
     networks:
