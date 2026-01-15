@@ -79,7 +79,6 @@ export const publishNotice = async (req, res) => {
       "students",
       "email name"
     );
-    console.log(hostel.students);
 
     if (!hostel) {
       return res.status(404).json({
@@ -98,7 +97,6 @@ export const publishNotice = async (req, res) => {
 
     for (const student of hostel.students) {
       try {
-        console.log("hello before sending mail...");
         const html = hostelNoticeEmailTemplate({
           title,
           description,
@@ -107,14 +105,15 @@ export const publishNotice = async (req, res) => {
           createdAt: notice.createdAt,
           expiryDate: notice.expiryDate,
         });
-        console.log("hello after sending mail...");
-        console.log("hi mail server");
 
         await sendMail(student.email, "New Hostel Notice", html);
+
+        await new Promise((resolve) => setTimeout(resolve, 300));
       } catch (mailError) {
         console.error(`Mail failed for ${student.email}`, mailError);
       }
     }
+
     return res.status(201).json({
       success: true,
       message: "Notice published successfully",
